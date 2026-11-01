@@ -8,10 +8,10 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in — dooars News" },
+      { title: "Sign in — Dooars Khabar" },
       { name: "description", content: "Sign in to save stories, comment and upload your own news." },
-      { property: "og:title", content: "Sign in — dooars News" },
-      { property: "og:description", content: "Join dooars News." },
+      { property: "og:title", content: "Sign in — Dooars Khabar" },
+      { property: "og:description", content: "Join Dooars Khabar." },
     ],
   }),
   component: AuthPage,
@@ -53,8 +53,8 @@ function AuthPage() {
     <main className="min-h-screen bg-brand px-5 pb-28 pt-14 text-primary-foreground">
       <div className="mx-auto max-w-sm animate-rise">
         <div className="text-center">
-          <span className="font-display text-4xl font-black italic text-sky">dooars</span>{" "}
-          <span className="font-display text-4xl font-black">News</span>
+          <span className="font-display text-4xl font-black italic text-sky">Dooars</span>{" "}
+          <span className="font-display text-4xl font-black">Khabar</span>
           <p className="mt-2 text-sm opacity-80">Read, share and report news from your area</p>
         </div>
         <div className="mt-8 rounded-3xl bg-card p-6 text-card-foreground shadow-card">

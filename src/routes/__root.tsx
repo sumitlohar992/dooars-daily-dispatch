@@ -60,9 +60,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#13307a" },
-      { title: "dooars News — Local news from the Dooars & beyond" },
+      { title: "Dooars Khabar — Local news from the Dooars & beyond" },
       { name: "description", content: "Breaking local, West Bengal and national news. Read, share and upload your own stories." },
-      { property: "og:title", content: "dooars News" },
+      { property: "og:title", content: "Dooars Khabar" },
       { property: "og:description", content: "Breaking local, West Bengal and national news." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -111,8 +111,8 @@ function Splash() {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-brand text-primary-foreground animate-out fade-out delay-1000 duration-400 fill-mode-forwards">
       <div className="animate-in zoom-in-90 fade-in duration-500 text-center">
-        <div className="font-display text-5xl font-black italic text-sky">dooars</div>
-        <div className="font-display text-5xl font-black">News</div>
+        <div className="font-display text-5xl font-black italic text-sky">Dooars</div>
+        <div className="font-display text-5xl font-black">Khabar</div>
         <p className="mt-3 text-sm opacity-80">Your region. Your voice.</p>
       </div>
     </div>

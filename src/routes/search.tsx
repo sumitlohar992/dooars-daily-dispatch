@@ -9,10 +9,10 @@ import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 export const Route = createFileRoute("/search")({
   head: () => ({
     meta: [
-      { title: "Search news — dooars News" },
-      { name: "description", content: "Search dooars News for any topic, place or person." },
-      { property: "og:title", content: "Search — dooars News" },
-      { property: "og:description", content: "Search dooars News for any topic." },
+      { title: "Search news — Dooars Khabar" },
+      { name: "description", content: "Search Dooars Khabar for any topic, place or person." },
+      { property: "og:title", content: "Search — Dooars Khabar" },
+      { property: "og:description", content: "Search Dooars Khabar for any topic." },
     ],
   }),
   component: SearchPage,

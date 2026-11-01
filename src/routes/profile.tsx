@@ -12,10 +12,10 @@ import { SavedList } from "@/components/SavedList";
 export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
-      { title: "My profile — dooars News" },
-      { name: "description", content: "Your profile, saved stories and published news on dooars News." },
-      { property: "og:title", content: "Profile — dooars News" },
-      { property: "og:description", content: "Your dooars News profile." },
+      { title: "My profile — Dooars Khabar" },
+      { name: "description", content: "Your profile, saved stories and published news on Dooars Khabar." },
+      { property: "og:title", content: "Profile — Dooars Khabar" },
+      { property: "og:description", content: "Your Dooars Khabar profile." },
     ],
   }),
   component: ProfilePage,

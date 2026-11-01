@@ -19,8 +19,8 @@ export function Header({ title, back }: { title?: string; back?: ReactNode }) {
           <h1 className="flex-1 truncate text-lg font-bold">{title}</h1>
         ) : (
           <Link to="/" className="flex flex-1 items-baseline gap-1">
-            <span className="font-display text-2xl font-black italic text-sky">dooars</span>
-            <span className="font-display text-2xl font-black">News</span>
+            <span className="font-display text-2xl font-black italic text-sky">Dooars</span>
+            <span className="font-display text-2xl font-black">Khabar</span>
           </Link>
         )}
         <Link to="/search" aria-label="Search" className="rounded-full p-2 hover:bg-primary-foreground/10">
