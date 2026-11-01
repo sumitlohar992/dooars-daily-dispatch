@@ -14,7 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          body: string
+          category: string
+          created_at: string
+          id: string
+          image_url: string | null
+          is_breaking: boolean
+          summary: string | null
+          title: string
+          video_url: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          summary?: string | null
+          title: string
+          video_url?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          body?: string
+          category?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_breaking?: boolean
+          summary?: string | null
+          title?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      bookmarks: {
+        Row: {
+          article_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          article_id: string
+          body: string
+          created_at: string
+          id: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          article_id: string
+          body: string
+          created_at?: string
+          id?: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          article_id?: string
+          body?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      reactions: {
+        Row: {
+          article_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reactions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
