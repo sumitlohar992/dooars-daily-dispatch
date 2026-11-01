@@ -107,7 +107,7 @@ function Home() {
     const el = sentinel.current;
     if (!el) return;
     const ob = new IntersectionObserver((e) => {
-      if (e[0].isIntersecting && q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage();
+      if (e[0]?.isIntersecting && q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage();
     }, { rootMargin: "300px" });
     ob.observe(el);
     return () => ob.disconnect();

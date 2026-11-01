@@ -47,11 +47,12 @@ function UploadPage() {
 
   const wrap = (before: string, after = before) => {
     const el = bodyRef.current;
-    if (!el) return;
+    if (!el) return undefined;
     const { selectionStart: s, selectionEnd: e } = el;
     const sel = body.slice(s, e) || "text";
     setBody(body.slice(0, s) + before + sel + after + body.slice(e));
     requestAnimationFrame(() => el.focus());
+    return undefined;
   };
 
   const submit = async (ev: React.FormEvent) => {
@@ -62,7 +63,7 @@ function UploadPage() {
     try {
       const image_url = image ? await uploadFile(user.id, image) : null;
       const video_url = video ? await uploadFile(user.id, video) : null;
-      const summary = body.replace(/[#*]/g, "").trim().split("\n")[0].slice(0, 160);
+      const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
       const { data, error } = await supabase.from("articles").insert({
         author_id: user.id, author_name: displayName, title: title.trim(), category, body, summary, image_url, video_url,
       }).select("id").single();

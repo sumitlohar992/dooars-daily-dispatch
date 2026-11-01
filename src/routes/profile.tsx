@@ -39,7 +39,7 @@ function ProfilePage() {
   if (loading) return <><Header title="Profile" /><Page><div /></Page></>;
   if (!user) return <><Header title="Profile" /><Page><SignInPrompt message="Sign in to see your profile." /></Page></>;
 
-  const avatar = user.user_metadata?.avatar_url as string | undefined;
+  const avatar = user.user_metadata?.["avatar_url"] as string | undefined;
   const signOut = async () => {
     await qc.cancelQueries();
     qc.clear();

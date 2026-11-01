@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => data.subscription.unsubscribe();
   }, []);
   const m = user?.user_metadata ?? {};
-  const displayName = (m.full_name || m.name || user?.email?.split("@")[0] || "Reader") as string;
+  const displayName = (m["full_name"] || m["name"] || user?.email?.split("@")[0] || "Reader") as string;
   return <Ctx.Provider value={{ user, loading, displayName }}>{children}</Ctx.Provider>;
 }
 

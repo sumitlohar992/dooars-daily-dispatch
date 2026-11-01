@@ -35,7 +35,7 @@ function Grid() {
   return (
     <div className="grid grid-cols-2 gap-3 p-4">
       {CATEGORIES.map((cat, i) => {
-        const Icon = ICONS[i];
+        const Icon = ICONS[i] ?? MapPin;
         return (
           <Link
             key={cat}
