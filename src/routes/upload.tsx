@@ -57,8 +57,8 @@ function UploadPage() {
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (title.trim().length < 5) return toast.error("Please write a headline (at least 5 letters)");
-    if (body.trim().length < 20) return toast.error("Please write a little more about the story");
+    if (title.trim().length < 5) { toast.error("Please write a headline (at least 5 letters)"); return; }
+    if (body.trim().length < 20) { toast.error("Please write a little more about the story"); return; }
     setBusy(true);
     try {
       const image_url = image ? await uploadFile(user.id, image) : null;
