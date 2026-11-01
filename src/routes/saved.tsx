@@ -7,10 +7,10 @@ import { SignInPrompt } from "@/components/SignInPrompt";
 export const Route = createFileRoute("/saved")({
   head: () => ({
     meta: [
-      { title: "Saved stories — dooars News" },
+      { title: "Saved stories — Dooars Khabar" },
       { name: "description", content: "News stories you saved to read later." },
-      { property: "og:title", content: "Saved — dooars News" },
-      { property: "og:description", content: "Your saved stories on dooars News." },
+      { property: "og:title", content: "Saved — Dooars Khabar" },
+      { property: "og:description", content: "Your saved stories on Dooars Khabar." },
     ],
   }),
   component: SavedPage,

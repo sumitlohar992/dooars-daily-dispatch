@@ -12,10 +12,10 @@ import { SignInPrompt } from "@/components/SignInPrompt";
 export const Route = createFileRoute("/upload")({
   head: () => ({
     meta: [
-      { title: "Upload News — dooars News" },
+      { title: "Upload News — Dooars Khabar" },
       { name: "description", content: "Share a news story from your area with photos or video." },
-      { property: "og:title", content: "Upload your news — dooars News" },
-      { property: "og:description", content: "Be a citizen reporter on dooars News." },
+      { property: "og:title", content: "Upload your news — Dooars Khabar" },
+      { property: "og:description", content: "Be a citizen reporter on Dooars Khabar." },
     ],
   }),
   component: UploadPage,

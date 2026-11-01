@@ -12,10 +12,10 @@ export const Route = createFileRoute("/categories")({
   validateSearch: z.object({ c: z.string().optional() }),
   head: () => ({
     meta: [
-      { title: "Categories — dooars News" },
+      { title: "Categories — Dooars Khabar" },
       { name: "description", content: "Browse news by category: Local, West Bengal, National, Politics, Sports and more." },
-      { property: "og:title", content: "News categories — dooars News" },
-      { property: "og:description", content: "Browse news by category on dooars News." },
+      { property: "og:title", content: "News categories — Dooars Khabar" },
+      { property: "og:description", content: "Browse news by category on Dooars Khabar." },
     ],
   }),
   component: Categories,

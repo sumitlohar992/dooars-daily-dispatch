@@ -12,10 +12,10 @@ import { RichText } from "@/components/RichText";
 export const Route = createFileRoute("/article/$id")({
   head: () => ({
     meta: [
-      { title: "News story — dooars News" },
-      { name: "description", content: "Read the full story on dooars News." },
-      { property: "og:title", content: "News story — dooars News" },
-      { property: "og:description", content: "Read the full story on dooars News." },
+      { title: "News story — Dooars Khabar" },
+      { name: "description", content: "Read the full story on Dooars Khabar." },
+      { property: "og:title", content: "News story — Dooars Khabar" },
+      { property: "og:description", content: "Read the full story on Dooars Khabar." },
       { property: "og:type", content: "article" },
     ],
   }),

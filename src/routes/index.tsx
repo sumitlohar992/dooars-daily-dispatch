@@ -9,10 +9,10 @@ import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "dooars News — Breaking news from the Dooars, Bengal & India" },
-      { name: "description", content: "Latest local, West Bengal, national, politics, sports and entertainment news from dooars News." },
-      { property: "og:title", content: "dooars News — Breaking news" },
-      { property: "og:description", content: "Latest local, West Bengal and national news from dooars News." },
+      { title: "Dooars Khabar — Breaking news from the Dooars, Bengal & India" },
+      { name: "description", content: "Latest local, West Bengal, national, politics, sports and entertainment news from Dooars Khabar." },
+      { property: "og:title", content: "Dooars Khabar — Breaking news" },
+      { property: "og:description", content: "Latest local, West Bengal and national news from Dooars Khabar." },
     ],
   }),
   component: Home,
