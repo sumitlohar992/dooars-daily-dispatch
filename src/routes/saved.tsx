@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Header, Page } from "@/components/AppShell";
-import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
+import { SavedList } from "@/components/SavedList";
 import { SignInPrompt } from "@/components/SignInPrompt";
 
 export const Route = createFileRoute("/saved")({
@@ -17,20 +15,6 @@ export const Route = createFileRoute("/saved")({
   }),
   component: SavedPage,
 });
-
-export function SavedList({ userId }: { userId: string }) {
-  const q = useQuery({
-    queryKey: ["saved", userId],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("bookmarks").select("created_at, articles(*)").eq("user_id", userId).order("created_at", { ascending: false });
-      if (error) throw error;
-      return data.map((d) => d.articles).filter(Boolean);
-    },
-  });
-  if (q.isLoading) return <CardSkeleton />;
-  if (!q.data?.length) return <p className="p-10 text-center text-muted-foreground">No saved stories yet. Tap the bookmark icon on any story.</p>;
-  return <>{q.data.map((a) => a && <ArticleCard key={a.id} a={a} />)}</>;
-}
 
 function SavedPage() {
   const { user, loading } = useAuth();

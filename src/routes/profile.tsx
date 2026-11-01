@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { SignInPrompt } from "@/components/SignInPrompt";
-import { SavedList } from "./saved";
+import { SavedList } from "@/components/SavedList";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
