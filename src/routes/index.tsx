@@ -52,6 +52,7 @@ function Ticker() {
 
 function Featured({ items }: { items: Article[] }) {
   const [i, setI] = useState(0);
+  const { t } = useT();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (items.length < 2) return;
@@ -76,7 +77,7 @@ function Featured({ items }: { items: Article[] }) {
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
             <div className="absolute inset-0 bg-fade" />
             <div className="absolute inset-x-0 bottom-0 p-4 pb-7 text-primary-foreground">
-              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{a.category}</span>
+              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{t(a.category)}</span>
               <h2 className="mt-2 line-clamp-2 text-xl font-extrabold leading-tight">{a.title}</h2>
               <p className="mt-1 text-xs opacity-80">{a.author_name} · {timeAgo(a.created_at)}</p>
             </div>
