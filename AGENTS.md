@@ -13,3 +13,4 @@
 - Data is read client-side via the browser Supabase client + React Query (all news tables are public-read with RLS); no server functions yet — keeps the app simple and fast on mobile.
 - Media lives in the private `media` bucket (public buckets are blocked by workspace policy); uploads store a 10-year signed URL on the article row.
 - Shared mobile chrome (header, bottom nav) lives in src/components/AppShell.tsx; bottom nav is mounted once in __root.
+- Android APK uses Capacitor wrapping the published URL (capacitor.config.ts); SSR app has no static build to bundle. UI strings live in src/lib/i18n.tsx (en/bn/hi/ne); story content is not translated.
