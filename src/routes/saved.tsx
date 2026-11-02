@@ -20,7 +20,7 @@ function SavedPage() {
   const { user, loading } = useAuth();
   return (
     <>
-      <Header title="Saved" />
+      <Header title="saved" />
       <Page>{loading ? null : user ? <SavedList userId={user.id} /> : <SignInPrompt message="Sign in to see your saved stories." />}</Page>
     </>
   );

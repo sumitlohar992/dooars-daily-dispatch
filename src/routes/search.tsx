@@ -32,7 +32,7 @@ function SearchPage() {
   });
   return (
     <>
-      <Header title="Search" />
+      <Header title="search" />
       <Page>
         <div className="p-4">
           <label className="flex h-12 items-center gap-2 rounded-full border bg-card px-4 shadow-card focus-within:ring-2 focus-within:ring-ring">

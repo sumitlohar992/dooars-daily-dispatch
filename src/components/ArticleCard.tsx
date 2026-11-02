@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { type Article, timeAgo } from "@/lib/news";
 import { Newspaper } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export function ArticleCard({ a }: { a: Article }) {
+  const { t } = useT();
   return (
     <Link
       to="/article/$id"
@@ -10,7 +12,7 @@ export function ArticleCard({ a }: { a: Article }) {
       className="flex gap-3 border-b bg-card p-4 transition-colors active:bg-muted"
     >
       <div className="min-w-0 flex-1">
-        <span className="text-[11px] font-bold uppercase tracking-wide text-sky">{a.category}</span>
+        <span className="text-[11px] font-bold uppercase tracking-wide text-sky">{t(a.category)}</span>
         <h3 className="mt-0.5 line-clamp-3 text-[15px] font-bold leading-snug">{a.title}</h3>
         <p className="mt-1.5 text-xs text-muted-foreground">
           {a.author_name} · {timeAgo(a.created_at)}

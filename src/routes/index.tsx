@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,12 +29,13 @@ function Ticker() {
       return data ?? [];
     },
   });
+  const { t } = useT();
   if (!data?.length) return null;
   const items = [...data, ...data];
   return (
     <div className="flex items-center overflow-hidden border-b bg-card">
       <span className="z-10 shrink-0 bg-breaking px-3 py-2 text-xs font-black uppercase tracking-wider text-breaking-foreground">
-        Breaking
+        {t("breaking")}
       </span>
       <div className="overflow-hidden">
         <div className="flex w-max animate-ticker gap-8 whitespace-nowrap py-2 pl-4 text-sm font-semibold">
@@ -50,6 +52,7 @@ function Ticker() {
 
 function Featured({ items }: { items: Article[] }) {
   const [i, setI] = useState(0);
+  const { t } = useT();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (items.length < 2) return;
@@ -74,7 +77,7 @@ function Featured({ items }: { items: Article[] }) {
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
             <div className="absolute inset-0 bg-fade" />
             <div className="absolute inset-x-0 bottom-0 p-4 pb-7 text-primary-foreground">
-              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{a.category}</span>
+              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{t(a.category)}</span>
               <h2 className="mt-2 line-clamp-2 text-xl font-extrabold leading-tight">{a.title}</h2>
               <p className="mt-1 text-xs opacity-80">{a.author_name} · {timeAgo(a.created_at)}</p>
             </div>
@@ -92,6 +95,7 @@ function Featured({ items }: { items: Article[] }) {
 
 function Home() {
   const [tab, setTab] = useState("All");
+  const { t: tr } = useT();
   const sentinel = useRef<HTMLDivElement>(null);
   const q = useInfiniteQuery({
     queryKey: ["feed", tab],
@@ -127,7 +131,7 @@ function Home() {
                 tab === t ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"
               }`}
             >
-              {t}
+              {tr(t)}
             </button>
           ))}
         </div>
@@ -139,16 +143,16 @@ function Home() {
           <>
             <Featured items={featured} />
             {tab === "All" && rest.length > 0 && (
-              <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">Latest News</h2>
+              <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">{tr("latest")}</h2>
             )}
             {rest.map((a) => <ArticleCard key={a.id} a={a} />)}
-            {!all.length && <p className="p-10 text-center text-muted-foreground">No news in {tab} yet.</p>}
+            {!all.length && <p className="p-10 text-center text-muted-foreground">{tr("noNews")}</p>}
           </>
         )}
         <div ref={sentinel} />
         {q.isFetchingNextPage && <CardSkeleton />}
         {!q.hasNextPage && all.length > 0 && (
-          <p className="py-6 text-center text-xs text-muted-foreground">You're all caught up</p>
+          <p className="py-6 text-center text-xs text-muted-foreground">{tr("caughtUp")}</p>
         )}
       </Page>
     </>

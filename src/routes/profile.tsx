@@ -8,6 +8,7 @@ import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { SignInPrompt } from "@/components/SignInPrompt";
 import { SavedList } from "@/components/SavedList";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/profile")({
   head: () => ({
@@ -25,6 +26,7 @@ function ProfilePage() {
   const { user, displayName, loading } = useAuth();
   const nav = useNavigate();
   const qc = useQueryClient();
+  const { t: tr } = useT();
   const [tab, setTab] = useState<"posts" | "saved">("posts");
   const mine = useQuery({
     queryKey: ["my-articles", user?.id],
@@ -36,8 +38,8 @@ function ProfilePage() {
     },
   });
 
-  if (loading) return <><Header title="Profile" /><Page><div /></Page></>;
-  if (!user) return <><Header title="Profile" /><Page><SignInPrompt message="Sign in to see your profile." /></Page></>;
+  if (loading) return <><Header title={tr("profile")} /><Page><div /></Page></>;
+  if (!user) return <><Header title={tr("profile")} /><Page><SignInPrompt message={tr("signInProfile")} /></Page></>;
 
   const avatar = user.user_metadata?.["avatar_url"] as string | undefined;
   const signOut = async () => {
@@ -49,7 +51,7 @@ function ProfilePage() {
 
   return (
     <>
-      <Header title="Profile" />
+      <Header title={tr("profile")} />
       <Page>
         <div className="bg-brand px-4 pb-6 pt-2 text-primary-foreground">
           <div className="flex items-center gap-4">
@@ -61,7 +63,7 @@ function ProfilePage() {
             <div className="min-w-0 flex-1">
               <p className="truncate font-display text-xl font-extrabold">{displayName}</p>
               <p className="truncate text-sm opacity-80">{user.email ?? user.phone}</p>
-              <p className="mt-1 text-xs opacity-80">{mine.data?.length ?? 0} stories published</p>
+              <p className="mt-1 text-xs opacity-80">{mine.data?.length ?? 0} {tr("published")}</p>
             </div>
             <button onClick={signOut} aria-label="Sign out" className="rounded-full p-2 hover:bg-primary-foreground/10"><LogOut className="h-5 w-5" /></button>
           </div>
@@ -69,7 +71,7 @@ function ProfilePage() {
         <div className="sticky top-14 z-10 grid grid-cols-2 border-b bg-card">
           {(["posts", "saved"] as const).map((t) => (
             <button key={t} onClick={() => setTab(t)} className={`border-b-2 py-3 text-sm font-bold ${tab === t ? "border-sky text-primary" : "border-transparent text-muted-foreground"}`}>
-              {t === "posts" ? "My News" : "Saved"}
+              {t === "posts" ? tr("myNews") : tr("saved")}
             </button>
           ))}
         </div>
@@ -80,7 +82,7 @@ function ProfilePage() {
         ) : mine.data?.length ? (
           mine.data.map((a) => <ArticleCard key={a.id} a={a} />)
         ) : (
-          <p className="p-10 text-center text-muted-foreground">You haven't published any news yet.</p>
+          <p className="p-10 text-center text-muted-foreground">{tr("noPosts")}</p>
         )}
       </Page>
     </>
