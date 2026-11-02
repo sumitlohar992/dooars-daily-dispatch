@@ -12,12 +12,13 @@ const NAV = [
 ] as const;
 
 export function Header({ title, back }: { title?: string; back?: ReactNode }) {
+  const { t } = useT();
   return (
     <header className="sticky top-0 z-30 bg-brand text-primary-foreground shadow-card">
       <div className="mx-auto flex h-14 max-w-xl items-center gap-3 px-4">
         {back}
         {title ? (
-          <h1 className="flex-1 truncate text-lg font-bold">{title}</h1>
+          <h1 className="flex-1 truncate text-lg font-bold">{t(title)}</h1>
         ) : (
           <Link to="/" className="flex flex-1 items-baseline gap-1">
             <span className="font-display text-2xl font-black italic text-sky">Dooars</span>
