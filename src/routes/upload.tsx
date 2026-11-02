@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { CATEGORIES } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
 import { SignInPrompt } from "@/components/SignInPrompt";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/upload")({
   head: () => ({
@@ -41,9 +42,10 @@ function UploadPage() {
   const [image, setImage] = useState<File | null>(null);
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const { t } = useT();
 
-  if (loading) return <><Header title="Upload News" /><Page><div /></Page></>;
-  if (!user) return <><Header title="Upload News" /><Page><SignInPrompt message="Sign in to publish your own news story." /></Page></>;
+  if (loading) return <><Header title={t("uploadNews")} /><Page><div /></Page></>;
+  if (!user) return <><Header title={t("uploadNews")} /><Page><SignInPrompt message={t("signInUpload")} /></Page></>;
 
   const wrap = (before: string, after = before) => {
     const el = bodyRef.current;
@@ -84,33 +86,33 @@ function UploadPage() {
 
   return (
     <>
-      <Header title="Upload News" />
+      <Header title={t("uploadNews")} />
       <Page>
         <form onSubmit={submit} className="space-y-5 p-4">
           <div>
-            <label className={label}>Headline</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={150} placeholder="What happened?" className={`${field} h-12 text-lg font-semibold`} />
+            <label className={label}>{t("headline")}</label>
+            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={150} placeholder={t("whatHappened")} className={`${field} h-12 text-lg font-semibold`} />
           </div>
 
           <div>
-            <label className={label}>Category</label>
+            <label className={label}>{t("category")}</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
                 <button type="button" key={c} onClick={() => setCategory(c)}
                   className={`rounded-full px-4 py-2 text-sm font-semibold ${category === c ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"}`}>
-                  {c}
+                  {t(c)}
                 </button>
               ))}
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <MediaPicker icon={<ImagePlus className="h-6 w-6" />} label="Add photo" accept="image/*" file={image} onChange={setImage} />
-            <MediaPicker icon={<Video className="h-6 w-6" />} label="Add video" accept="video/*" file={video} onChange={setVideo} />
+            <MediaPicker icon={<ImagePlus className="h-6 w-6" />} label={t("addPhoto")} accept="image/*" file={image} onChange={setImage} />
+            <MediaPicker icon={<Video className="h-6 w-6" />} label={t("addVideo")} accept="video/*" file={video} onChange={setVideo} />
           </div>
 
           <div>
-            <label className={label}>Full story</label>
+            <label className={label}>{t("fullStory")}</label>
             <div className="overflow-hidden rounded-xl border bg-card focus-within:ring-2 focus-within:ring-ring">
               <div className="flex gap-1 border-b bg-muted/50 p-1.5">
                 <ToolBtn onClick={() => wrap("**")} label="Bold"><Bold className="h-4 w-4" /></ToolBtn>
@@ -118,14 +120,14 @@ function UploadPage() {
                 <ToolBtn onClick={() => wrap("\n\n## ", "\n\n")} label="Heading"><Heading2 className="h-4 w-4" /></ToolBtn>
               </div>
               <textarea ref={bodyRef} value={body} onChange={(e) => setBody(e.target.value)} rows={10}
-                placeholder="Tell the full story. Who, what, where, when…" className="w-full resize-y bg-transparent p-4 outline-none" />
+                placeholder={t("storyPh")} className="w-full resize-y bg-transparent p-4 outline-none" />
             </div>
           </div>
 
           <button disabled={busy} className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-lg font-bold text-primary-foreground shadow-card disabled:opacity-60">
-            {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> Publishing…</> : "Publish News"}
+            {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {t("publishing")}</> : t("publish")}
           </button>
-          <p className="text-center text-xs text-muted-foreground">Your story goes live immediately. Please share only true, respectful news.</p>
+          <p className="text-center text-xs text-muted-foreground">{t("liveNote")}</p>
         </form>
       </Page>
     </>

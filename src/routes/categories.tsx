@@ -1,3 +1,4 @@
+import { useT } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { MapPin, Map, Flag, Landmark, Trophy, Clapperboard, Briefcase, HeartPulse } from "lucide-react";
@@ -23,15 +24,17 @@ export const Route = createFileRoute("/categories")({
 
 function Categories() {
   const { c } = Route.useSearch();
+  const { t } = useT();
   return (
     <>
-      <Header title={c ?? "Categories"} />
+      <Header title={t(c ?? "categories")} />
       <Page>{c ? <CategoryFeed category={c} /> : <Grid />}</Page>
     </>
   );
 }
 
 function Grid() {
+  const { t } = useT();
   return (
     <div className="grid grid-cols-2 gap-3 p-4">
       {CATEGORIES.map((cat, i) => {
@@ -46,7 +49,7 @@ function Grid() {
             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-sky-soft text-primary">
               <Icon className="h-5 w-5" />
             </span>
-            <span className="font-display font-bold">{cat}</span>
+            <span className="font-display font-bold">{t(cat)}</span>
           </Link>
         );
       })}
@@ -62,15 +65,16 @@ function CategoryFeed({ category }: { category: string }) {
     getNextPageParam: (last, all) => (last.length === PAGE_SIZE ? all.length : undefined),
   });
   const all = q.data?.pages.flat() ?? [];
+  const { t } = useT();
   return (
     <>
-      <Link to="/categories" className="block px-4 py-3 text-sm font-semibold text-sky">← All categories</Link>
+      <Link to="/categories" className="block px-4 py-3 text-sm font-semibold text-sky">{t("allCats")}</Link>
       {q.isLoading && <CardSkeleton />}
       {all.map((a) => <ArticleCard key={a.id} a={a} />)}
-      {!q.isLoading && !all.length && <p className="p-10 text-center text-muted-foreground">No news yet.</p>}
+      {!q.isLoading && !all.length && <p className="p-10 text-center text-muted-foreground">{t("noNews")}</p>}
       {q.hasNextPage && (
         <button onClick={() => q.fetchNextPage()} className="mx-auto my-4 block rounded-full bg-sky-soft px-5 py-2 text-sm font-semibold text-primary">
-          Load more
+          {t("loadMore")}
         </button>
       )}
     </>
