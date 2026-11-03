@@ -1,7 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { LogOut } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Header, Page } from "@/components/AppShell";
@@ -65,6 +65,7 @@ function ProfilePage() {
               <p className="truncate text-sm opacity-80">{user.email ?? user.phone}</p>
               <p className="mt-1 text-xs opacity-80">{mine.data?.length ?? 0} {tr("published")}</p>
             </div>
+            <Link to="/settings" aria-label="Settings" className="rounded-full p-2 hover:bg-primary-foreground/10"><Settings className="h-5 w-5" /></Link>
             <button onClick={signOut} aria-label="Sign out" className="rounded-full p-2 hover:bg-primary-foreground/10"><LogOut className="h-5 w-5" /></button>
           </div>
         </div>

@@ -109,6 +109,11 @@ function ArticlePage() {
           </div>
           {a.summary && <p className="mt-4 text-lg font-medium text-muted-foreground">{a.summary}</p>}
           <RichText text={a.body} />
+          {a.source_url && (
+            <a href={a.source_url} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-full bg-sky px-5 py-2 font-bold text-secondary-foreground">
+              Read full story on {a.source_name ?? "source"}
+            </a>
+          )}
           {a.video_url && <video src={a.video_url} controls playsInline className="mt-4 w-full rounded-xl bg-foreground" />}
 
           <div className="mt-6 flex items-center gap-2">
