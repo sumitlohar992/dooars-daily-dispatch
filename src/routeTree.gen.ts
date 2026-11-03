@@ -17,6 +17,7 @@ import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
+import { Route as ApiPublicCronGoogleNewsRouteImport } from './routes/api/public/cron/google-news'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const ArticleIdRoute = ArticleIdRouteImport.update({
   path: '/article/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicCronGoogleNewsRoute = ApiPublicCronGoogleNewsRouteImport.update({
+  id: '/api/public/cron/google-news',
+  path: '/api/public/cron/google-news',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/upload'
     | '/article/$id'
+    | '/api/public/cron/google-news'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/upload'
     | '/article/$id'
+    | '/api/public/cron/google-news'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/upload'
     | '/article/$id'
+    | '/api/public/cron/google-news'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   UploadRoute: typeof UploadRoute
   ArticleIdRoute: typeof ArticleIdRoute
+  ApiPublicCronGoogleNewsRoute: typeof ApiPublicCronGoogleNewsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/cron/google-news': {
+      id: '/api/public/cron/google-news'
+      path: '/api/public/cron/google-news'
+      fullPath: '/api/public/cron/google-news'
+      preLoaderRoute: typeof ApiPublicCronGoogleNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   UploadRoute: UploadRoute,
   ArticleIdRoute: ArticleIdRoute,
+  ApiPublicCronGoogleNewsRoute: ApiPublicCronGoogleNewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
