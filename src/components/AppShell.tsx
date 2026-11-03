@@ -20,7 +20,8 @@ export function Header({ title, back }: { title?: string; back?: ReactNode }) {
         {title ? (
           <h1 className="flex-1 truncate text-lg font-bold">{t(title)}</h1>
         ) : (
-          <Link to="/" className="flex flex-1 items-baseline gap-1">
+          <Link to="/" className="flex flex-1 items-center gap-1.5">
+            <img src="/logo.png" alt="" className="h-8 w-8 rounded-lg" />
             <span className="font-display text-2xl font-black italic text-sky">Dooars</span>
             <span className="font-display text-2xl font-black">Khabar</span>
           </Link>
