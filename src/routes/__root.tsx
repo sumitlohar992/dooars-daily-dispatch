@@ -114,6 +114,7 @@ function Splash() {
   return (
     <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-brand text-primary-foreground animate-out fade-out delay-1000 duration-400 fill-mode-forwards">
       <div className="animate-in zoom-in-90 fade-in duration-500 text-center">
+        <img src="/logo.png" alt="" className="mx-auto mb-4 h-24 w-24 rounded-2xl shadow-card" />
         <div className="font-display text-5xl font-black italic text-sky">Dooars</div>
         <div className="font-display text-5xl font-black">Khabar</div>
         <p className="mt-3 text-sm opacity-80">Your region. Your voice.</p>
