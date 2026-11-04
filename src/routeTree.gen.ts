@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as DownloadRouteImport } from './routes/download'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SearchRouteImport } from './routes/search'
@@ -40,6 +41,11 @@ const AuthRoute = AuthRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadRoute = DownloadRouteImport.update({
+  id: '/download',
+  path: '/download',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -102,6 +109,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -117,6 +125,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -133,6 +142,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  DownloadRoute: typeof DownloadRoute
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/download': {
+      id: '/download'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof DownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -280,6 +300,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  DownloadRoute: DownloadRoute,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,

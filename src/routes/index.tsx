@@ -6,6 +6,41 @@ import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/l
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
+import { RefreshCw, Download, Bot } from "lucide-react";
+
+function SlideBar() {
+  const { data } = useQuery({
+    queryKey: ["slides"],
+    queryFn: async () => (await supabase.from("slides").select("*").order("sort").order("created_at")).data ?? [],
+  });
+  const [i, setI] = useState(0);
+  useEffect(() => {
+    if (!data || data.length < 2) return;
+    const t = setInterval(() => setI((x) => (x + 1) % data.length), 4000);
+    return () => clearInterval(t);
+  }, [data]);
+  const s = data?.[i % (data?.length || 1)];
+  if (!s) return null;
+  const inner = <p key={s.id} className="animate-rise truncate text-center text-sm font-bold">{s.title}</p>;
+  return (
+    <div className="bg-sky px-4 py-2 text-secondary-foreground">
+      {s.link ? <a href={s.link} target="_blank" rel="noreferrer">{inner}</a> : inner}
+    </div>
+  );
+}
+
+function AppBanner() {
+  const [web, setWeb] = useState(false);
+  useEffect(() => { setWeb(!(window as unknown as { Capacitor?: unknown }).Capacitor && !window.matchMedia("(display-mode: standalone)").matches); }, []);
+  if (!web) return null;
+  return (
+    <Link to="/download" className="mx-4 mt-3 flex items-center gap-3 rounded-2xl bg-sky-soft p-3">
+      <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl" />
+      <span className="flex-1 text-sm font-bold text-primary">Get the Dooars Khabar app</span>
+      <span className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground"><Download className="h-4 w-4" />Download</span>
+    </Link>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -120,6 +155,7 @@ function Home() {
   return (
     <>
       <Header />
+      <SlideBar />
       <Ticker />
       <div className="sticky top-14 z-20 border-b bg-card">
         <div className="no-scrollbar mx-auto flex max-w-xl gap-2 overflow-x-auto px-4 py-2.5">
@@ -137,6 +173,15 @@ function Home() {
         </div>
       </div>
       <Page>
+        <AppBanner />
+        <div className="flex gap-2 px-4 pt-3">
+          <button onClick={() => q.refetch()} disabled={q.isRefetching} className="flex flex-1 items-center justify-center gap-2 rounded-full border bg-card py-2 text-sm font-bold text-primary">
+            <RefreshCw className={`h-4 w-4 ${q.isRefetching ? "animate-spin" : ""}`} />{q.isRefetching ? "Refreshing…" : "Refresh news"}
+          </button>
+          <Link to="/ask" className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary py-2 text-sm font-bold text-primary-foreground">
+            <Bot className="h-4 w-4" />Ask about Dooars
+          </Link>
+        </div>
         {q.isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
         ) : (
