@@ -29,6 +29,7 @@ export type Database = {
           summary: string | null
           title: string
           video_url: string | null
+          views: number
         }
         Insert: {
           author_id?: string | null
@@ -44,6 +45,7 @@ export type Database = {
           summary?: string | null
           title: string
           video_url?: string | null
+          views?: number
         }
         Update: {
           author_id?: string | null
@@ -59,6 +61,25 @@ export type Database = {
           summary?: string | null
           title?: string
           video_url?: string | null
+          views?: number
+        }
+        Relationships: []
+      }
+      banned_emails: {
+        Row: {
+          created_at: string
+          email: string
+          reason: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          reason?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          reason?: string | null
         }
         Relationships: []
       }
@@ -123,6 +144,57 @@ export type Database = {
           },
         ]
       }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          file_name: string | null
+          file_type: string | null
+          file_url: string | null
+          id: string
+          recipient_id: string
+          sender_id: string
+        }
+        Insert: {
+          body?: string
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          recipient_id: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          file_name?: string | null
+          file_type?: string | null
+          file_url?: string | null
+          id?: string
+          recipient_id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -169,6 +241,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      slides: {
+        Row: {
+          created_at: string
+          id: string
+          link: string | null
+          sort: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          sort?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          link?: string | null
+          sort?: number
+          title?: string
+        }
+        Relationships: []
       }
       user_details: {
         Row: {
@@ -230,6 +326,7 @@ export type Database = {
     }
     Functions: {
       admin_stats: { Args: never; Returns: Json }
+      are_connected: { Args: { _a: string; _b: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -237,6 +334,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_view: { Args: { _article_id: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "user"
