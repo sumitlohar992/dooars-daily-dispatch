@@ -13,10 +13,12 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as DownloadRouteImport } from './routes/download'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
 import { Route as ApiPublicCronGoogleNewsRouteImport } from './routes/api/public/cron/google-news'
@@ -41,6 +43,11 @@ const CategoriesRoute = CategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DownloadRoute = DownloadRouteImport.update({
+  id: '/download',
+  path: '/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
@@ -59,6 +66,11 @@ const SearchRoute = SearchRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UploadRoute = UploadRouteImport.update({
@@ -82,10 +94,12 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -95,10 +109,12 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -109,10 +125,12 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/download': typeof DownloadRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -124,10 +142,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -137,10 +157,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -150,10 +172,12 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/categories'
+    | '/download'
     | '/profile'
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -164,10 +188,12 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  DownloadRoute: typeof DownloadRoute
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  TermsRoute: typeof TermsRoute
   UploadRoute: typeof UploadRoute
   ArticleIdRoute: typeof ArticleIdRoute
   ApiPublicCronGoogleNewsRoute: typeof ApiPublicCronGoogleNewsRoute
@@ -203,6 +229,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/download': {
+      id: '/download'
+      path: '/download'
+      fullPath: '/download'
+      preLoaderRoute: typeof DownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/profile': {
       id: '/profile'
       path: '/profile'
@@ -229,6 +262,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/upload': {
@@ -260,10 +300,12 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  DownloadRoute: DownloadRoute,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  TermsRoute: TermsRoute,
   UploadRoute: UploadRoute,
   ArticleIdRoute: ArticleIdRoute,
   ApiPublicCronGoogleNewsRoute: ApiPublicCronGoogleNewsRoute,
