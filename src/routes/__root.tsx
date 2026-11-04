@@ -16,6 +16,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { BottomNav } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/lib/i18n";
+import { TermsGate } from "@/components/Terms";
 
 function NotFoundComponent() {
   return (
@@ -101,12 +102,29 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+// Short three-note welcome chime made in the browser (no audio file needed).
+function playChime() {
+  try {
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
+    [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      const t = ctx.currentTime + i * 0.18;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.18, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.65);
+    });
+    setTimeout(() => ctx.close(), 1600);
+  } catch { /* sound blocked */ }
+}
+
 function Splash() {
   const [show, setShow] = useState(false);
   useEffect(() => {
     if (sessionStorage.getItem("splashed")) return;
     sessionStorage.setItem("splashed", "1");
     setShow(true);
+    if (localStorage.getItem("dk-sound") !== "off") playChime();
     const t = setTimeout(() => setShow(false), 1400);
     return () => clearTimeout(t);
   }, []);
@@ -130,6 +148,7 @@ function RootComponent() {
       <LanguageProvider>
       <AuthProvider>
         <Splash />
+        <TermsGate />
         <Outlet />
         <BottomNav />
         <Toaster position="top-center" />

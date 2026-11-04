@@ -17,6 +17,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
 import { Route as ApiPublicCronGoogleNewsRouteImport } from './routes/api/public/cron/google-news'
@@ -61,6 +62,11 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UploadRoute = UploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -86,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -113,6 +121,7 @@ export interface FileRoutesById {
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/saved'
     | '/search'
     | '/settings'
+    | '/terms'
     | '/upload'
     | '/article/$id'
     | '/api/public/cron/google-news'
@@ -168,6 +180,7 @@ export interface RootRouteChildren {
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  TermsRoute: typeof TermsRoute
   UploadRoute: typeof UploadRoute
   ArticleIdRoute: typeof ArticleIdRoute
   ApiPublicCronGoogleNewsRoute: typeof ApiPublicCronGoogleNewsRoute
@@ -231,6 +244,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/upload': {
       id: '/upload'
       path: '/upload'
@@ -264,6 +284,7 @@ const rootRouteChildren: RootRouteChildren = {
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  TermsRoute: TermsRoute,
   UploadRoute: UploadRoute,
   ArticleIdRoute: ArticleIdRoute,
   ApiPublicCronGoogleNewsRoute: ApiPublicCronGoogleNewsRoute,
