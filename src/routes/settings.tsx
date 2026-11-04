@@ -136,9 +136,6 @@ function SettingsPage() {
           {isAdmin && (
             <Link to="/admin" className={row}><ShieldCheck className="h-5 w-5 text-primary" /><span className="flex-1">Owner dashboard</span><ChevronRight className="h-4 w-4" /></Link>
           )}
-          <Link to="/dashboard" className={row}><LayoutDashboard className="h-5 w-5 text-primary" /><span className="flex-1">My dashboard</span><ChevronRight className="h-4 w-4" /></Link>
-          <Link to="/messages" className={row}><MessagesSquare className="h-5 w-5 text-primary" /><span className="flex-1">My chats</span><ChevronRight className="h-4 w-4" /></Link>
-          <Link to="/ask" className={row}><Bot className="h-5 w-5 text-primary" /><span className="flex-1">Ask Dooars Khabar (AI helper)</span><ChevronRight className="h-4 w-4" /></Link>
           <a href="/download" className={row}><Download className="h-5 w-5 text-primary" /><span className="flex-1">Download the app</span><ChevronRight className="h-4 w-4" /></a>
           <button onClick={toggleSound} className={row}><Volume2 className="h-5 w-5 text-primary" /><span className="flex-1">Welcome sound</span><span className="text-sm text-muted-foreground">{sound ? "On" : "Off"}</span></button>
           <button onClick={update} className={row}><RefreshCw className="h-5 w-5 text-primary" /><span className="flex-1">Update app</span><ChevronRight className="h-4 w-4" /></button>
