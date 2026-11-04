@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Camera, RefreshCw, HelpCircle, Mail, Phone, ShieldCheck, ChevronRight, MessageCircle } from "lucide-react";
+import { Camera, RefreshCw, HelpCircle, Mail, Phone, ShieldCheck, ChevronRight, MessageCircle, LayoutDashboard, FileText, Bot, Volume2, Download, Trash2, MessagesSquare } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { deleteMyAccount } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Header, Page } from "@/components/AppShell";
@@ -30,6 +32,9 @@ function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [help, setHelp] = useState(false);
+  const [sound, setSound] = useState(true);
+  const delFn = useServerFn(deleteMyAccount);
+  useEffect(() => { setSound(localStorage.getItem("dk-sound") !== "off"); }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -77,6 +82,18 @@ function SettingsPage() {
     error ? toast.error(error.message) : toast.success("Your details are saved");
   };
 
+  const removeAccount = async () => {
+    if (!confirm("Delete your account forever? Your posts, comments, chats and details will be removed. This cannot be undone.")) return;
+    if (prompt('Type DELETE to confirm') !== "DELETE") return;
+    try {
+      await delFn();
+      await supabase.auth.signOut();
+      toast.success("Your account was deleted");
+      window.location.href = "/";
+    } catch (e) { toast.error((e as Error).message); }
+  };
+  const toggleSound = () => { const n = !sound; setSound(n); localStorage.setItem("dk-sound", n ? "on" : "off"); };
+
   const update = async () => {
     toast("Checking for the latest version…");
     if ("caches" in window) { const keys = await caches.keys(); await Promise.all(keys.map((k) => caches.delete(k))); }
@@ -119,6 +136,11 @@ function SettingsPage() {
           {isAdmin && (
             <Link to="/admin" className={row}><ShieldCheck className="h-5 w-5 text-primary" /><span className="flex-1">Owner dashboard</span><ChevronRight className="h-4 w-4" /></Link>
           )}
+          <Link to="/dashboard" className={row}><LayoutDashboard className="h-5 w-5 text-primary" /><span className="flex-1">My dashboard</span><ChevronRight className="h-4 w-4" /></Link>
+          <Link to="/messages" className={row}><MessagesSquare className="h-5 w-5 text-primary" /><span className="flex-1">My chats</span><ChevronRight className="h-4 w-4" /></Link>
+          <Link to="/ask" className={row}><Bot className="h-5 w-5 text-primary" /><span className="flex-1">Ask Dooars Khabar (AI helper)</span><ChevronRight className="h-4 w-4" /></Link>
+          <a href="/download" className={row}><Download className="h-5 w-5 text-primary" /><span className="flex-1">Download the app</span><ChevronRight className="h-4 w-4" /></a>
+          <button onClick={toggleSound} className={row}><Volume2 className="h-5 w-5 text-primary" /><span className="flex-1">Welcome sound</span><span className="text-sm text-muted-foreground">{sound ? "On" : "Off"}</span></button>
           <button onClick={update} className={row}><RefreshCw className="h-5 w-5 text-primary" /><span className="flex-1">Update app</span><ChevronRight className="h-4 w-4" /></button>
           <button onClick={() => setHelp(!help)} className={row}><HelpCircle className="h-5 w-5 text-primary" /><span className="flex-1">Help</span><ChevronRight className="h-4 w-4" /></button>
           {help && (
@@ -132,6 +154,10 @@ function SettingsPage() {
           <a href={`mailto:${CONTACT_EMAIL}?subject=Dooars%20Khabar%20help`} className={row}><Mail className="h-5 w-5 text-primary" /><span className="flex-1">Contact us by email</span><ChevronRight className="h-4 w-4" /></a>
           <a href={`https://wa.me/?text=${encodeURIComponent("Hello Dooars Khabar team")}`} target="_blank" rel="noreferrer" className={row}><MessageCircle className="h-5 w-5 text-primary" /><span className="flex-1">Contact us on WhatsApp</span><ChevronRight className="h-4 w-4" /></a>
           <a href={`mailto:${CONTACT_EMAIL}?subject=Report%20a%20problem`} className={row}><Phone className="h-5 w-5 text-primary" /><span className="flex-1">Report a problem</span><ChevronRight className="h-4 w-4" /></a>
+        </section>
+        <section className="mt-4 border-t bg-card">
+          <Link to="/terms" className={row}><FileText className="h-5 w-5 text-primary" /><span className="flex-1">Terms and Conditions</span><ChevronRight className="h-4 w-4" /></Link>
+          <button onClick={removeAccount} className={`${row} text-destructive`}><Trash2 className="h-5 w-5" /><span className="flex-1">Delete my account</span></button>
         </section>
         <p className="p-6 text-center text-xs text-muted-foreground">Dooars Khabar · Your region. Your voice.</p>
       </Page>
