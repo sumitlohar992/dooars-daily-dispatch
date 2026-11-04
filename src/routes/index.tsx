@@ -178,9 +178,6 @@ function Home() {
           <button onClick={() => q.refetch()} disabled={q.isRefetching} className="flex flex-1 items-center justify-center gap-2 rounded-full border bg-card py-2 text-sm font-bold text-primary">
             <RefreshCw className={`h-4 w-4 ${q.isRefetching ? "animate-spin" : ""}`} />{q.isRefetching ? "Refreshing…" : "Refresh news"}
           </button>
-          <Link to="/ask" className="flex flex-1 items-center justify-center gap-2 rounded-full bg-primary py-2 text-sm font-bold text-primary-foreground">
-            <Bot className="h-4 w-4" />Ask about Dooars
-          </Link>
         </div>
         {q.isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
