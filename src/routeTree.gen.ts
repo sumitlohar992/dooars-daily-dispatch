@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DownloadRouteImport } from './routes/download'
 import { Route as LiveRouteImport } from './routes/live'
 import { Route as ProfileRouteImport } from './routes/profile'
@@ -49,6 +50,11 @@ const AuthRoute = AuthRouteImport.update({
 const CategoriesRoute = CategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DownloadRoute = DownloadRouteImport.update({
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
   '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
   '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
   '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
     | '/live'
     | '/profile'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
     | '/live'
     | '/profile'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
     | '/live'
     | '/profile'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  DashboardRoute: typeof DashboardRoute
   DownloadRoute: typeof DownloadRoute
   LiveRoute: typeof LiveRoute
   ProfileRoute: typeof ProfileRoute
@@ -273,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/categories'
       preLoaderRoute: typeof CategoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/download': {
@@ -361,6 +381,7 @@ const rootRouteChildren: RootRouteChildren = {
   AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  DashboardRoute: DashboardRoute,
   DownloadRoute: DownloadRoute,
   LiveRoute: LiveRoute,
   ProfileRoute: ProfileRoute,

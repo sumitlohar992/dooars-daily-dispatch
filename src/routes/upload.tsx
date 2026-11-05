@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bold, Heading2, ImagePlus, Italic, Loader2, Video, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +19,7 @@ export const Route = createFileRoute("/upload")({
       { property: "og:description", content: "Be a citizen reporter on Dooars Khabar." },
     ],
   }),
+  validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s.edit === "string" ? s.edit : undefined }),
   component: UploadPage,
 });
 
@@ -31,7 +32,28 @@ async function uploadFile(userId: string, file: File) {
   return data.signedUrl;
 }
 
+/** Grabs a frame ~1s into the video and returns it as a JPEG file for the thumbnail. */
+function videoThumbnail(file: File): Promise<File | null> {
+  return new Promise((resolve) => {
+    const v = document.createElement("video");
+    const url = URL.createObjectURL(file);
+    const done = (f: File | null) => { URL.revokeObjectURL(url); resolve(f); };
+    v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = url;
+    v.onloadeddata = () => { v.currentTime = Math.min(1, (v.duration || 2) / 2); };
+    v.onseeked = () => {
+      const c = document.createElement("canvas");
+      const scale = Math.min(1, 1280 / (v.videoWidth || 1280));
+      c.width = (v.videoWidth || 1280) * scale; c.height = (v.videoHeight || 720) * scale;
+      c.getContext("2d")?.drawImage(v, 0, 0, c.width, c.height);
+      c.toBlob((b) => done(b ? new File([b], "thumbnail.jpg", { type: "image/jpeg" }) : null), "image/jpeg", 0.85);
+    };
+    v.onerror = () => done(null);
+    setTimeout(() => done(null), 15000);
+  });
+}
+
 function UploadPage() {
+  const { edit } = Route.useSearch();
   const { user, displayName, loading } = useAuth();
   const nav = useNavigate();
   const qc = useQueryClient();
@@ -43,6 +65,15 @@ function UploadPage() {
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const { t } = useT();
+  const [existing, setExisting] = useState<{ image_url: string | null; video_url: string | null } | null>(null);
+  useEffect(() => {
+    if (!edit) { setExisting(null); return; }
+    supabase.from("articles").select("*").eq("id", edit).maybeSingle().then(({ data }) => {
+      if (!data) return;
+      setTitle(data.title); setCategory(data.category); setBody(data.body);
+      setExisting({ image_url: data.image_url, video_url: data.video_url });
+    });
+  }, [edit]);
 
   if (loading) return <><Header title={t("uploadNews")} /><Page><div /></Page></>;
   if (!user) return <><Header title={t("uploadNews")} /><Page><SignInPrompt message={t("signInUpload")} /></Page></>;
@@ -63,16 +94,20 @@ function UploadPage() {
     if (body.trim().length < 20) { toast.error("Please write a little more about the story"); return; }
     setBusy(true);
     try {
-      const image_url = image ? await uploadFile(user.id, image) : null;
-      const video_url = video ? await uploadFile(user.id, video) : null;
+      const thumb = !image && video ? await videoThumbnail(video) : null;
+      const image_url = image ? await uploadFile(user.id, image) : thumb ? await uploadFile(user.id, thumb) : existing?.image_url ?? null;
+      const video_url = video ? await uploadFile(user.id, video) : existing?.video_url ?? null;
       const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
-      const { data, error } = await supabase.from("articles").insert({
-        author_id: user.id, author_name: displayName, title: title.trim(), category, body, summary, image_url, video_url,
-      }).select("id").single();
+      const fields = { title: title.trim(), category, body, summary, image_url, video_url };
+      const { data, error } = edit
+        ? await supabase.from("articles").update(fields).eq("id", edit).select("id").single()
+        : await supabase.from("articles").insert({ ...fields, author_id: user.id, author_name: displayName }).select("id").single();
       if (error) throw error;
+      qc.invalidateQueries({ queryKey: ["article", data.id] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
       qc.invalidateQueries({ queryKey: ["feed"] });
       qc.invalidateQueries({ queryKey: ["my-articles"] });
-      toast.success("Your news is live!");
+      toast.success(edit ? "Changes saved" : "Your news is live!");
       nav({ to: "/article/$id", params: { id: data.id } });
     } catch (e) {
       toast.error((e as Error).message || "Upload failed");
@@ -86,7 +121,7 @@ function UploadPage() {
 
   return (
     <>
-      <Header title={t("uploadNews")} />
+      <Header title={edit ? "Edit post" : t("uploadNews")} />
       <Page>
         <form onSubmit={submit} className="space-y-5 p-4">
           <div>
@@ -125,7 +160,7 @@ function UploadPage() {
           </div>
 
           <button disabled={busy} className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-lg font-bold text-primary-foreground shadow-card disabled:opacity-60">
-            {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {t("publishing")}</> : t("publish")}
+            {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {t("publishing")}</> : edit ? "Save changes" : t("publish")}
           </button>
           <p className="text-center text-xs text-muted-foreground">{t("liveNote")}</p>
         </form>
