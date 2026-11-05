@@ -4,7 +4,7 @@ import { Send, Loader2, LifeBuoy, MapPin } from "lucide-react";
 import { Header, Page } from "@/components/AppShell";
 
 export const Route = createFileRoute("/assistant")({
-  validateSearch: (s: Record<string, unknown>) => ({ mode: s.mode === "ask" ? ("ask" as const) : ("help" as const) }),
+  validateSearch: (s: Record<string, unknown>) => ({ mode: s["mode"] === "ask" ? ("ask" as const) : ("help" as const) }),
   head: () => ({
     meta: [
       { title: "Help & Ask about Dooars — Dooars Khabar" },

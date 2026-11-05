@@ -19,7 +19,7 @@ export const Route = createFileRoute("/upload")({
       { property: "og:description", content: "Be a citizen reporter on Dooars Khabar." },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s.edit === "string" ? s.edit : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s["edit"] === "string" ? s["edit"] : undefined }),
   component: UploadPage,
 });
 

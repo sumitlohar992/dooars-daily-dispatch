@@ -20,7 +20,7 @@ export const Route = createFileRoute("/api/public/ai")({
         if (mode === "ask") {
           const q = history[history.length - 1]!.content;
           const words = q.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu)?.slice(0, 6) ?? [];
-          const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, { auth: { persistSession: false, autoRefreshToken: false } });
+          const sb = createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!, { auth: { persistSession: false, autoRefreshToken: false } });
           let query = sb.from("articles").select("id,title,summary,body,created_at").order("created_at", { ascending: false }).limit(12);
           if (words.length) query = query.or(words.map((w) => `title.ilike.%${w.replace(/[,()%]/g, "")}%,body.ilike.%${w.replace(/[,()%]/g, "")}%`).join(","));
           let { data } = await query;
@@ -30,8 +30,8 @@ export const Route = createFileRoute("/api/public/ai")({
         }
         const openai = createOpenAI({
           baseURL: "https://ai.gateway.lovable.dev/v1",
-          apiKey: process.env.LOVABLE_API_KEY!,
-          headers: { "Lovable-API-Key": process.env.LOVABLE_API_KEY!, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
+          apiKey: process.env["LOVABLE_API_KEY"]!,
+          headers: { "Lovable-API-Key": process.env["LOVABLE_API_KEY"]!, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
         });
         try {
           const result = streamText({
