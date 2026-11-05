@@ -158,7 +158,7 @@ function Home() {
       <SlideBar />
       <Ticker />
       <div className="sticky top-14 z-20 border-b bg-card">
-        <div className="no-scrollbar mx-auto flex max-w-xl gap-2 overflow-x-auto px-4 py-2.5">
+        <div className="no-scrollbar mx-auto flex max-w-xl md:max-w-3xl lg:max-w-5xl gap-2 overflow-x-auto px-4 py-2.5">
           {TABS.map((t) => (
             <button
               key={t}

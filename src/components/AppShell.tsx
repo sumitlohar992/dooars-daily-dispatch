@@ -15,7 +15,7 @@ export function Header({ title, back }: { title?: string; back?: ReactNode }) {
   const { t } = useT();
   return (
     <header className="sticky top-0 z-30 bg-brand text-primary-foreground shadow-card">
-      <div className="mx-auto flex h-14 max-w-xl items-center gap-3 px-4">
+      <div className="mx-auto flex h-14 max-w-xl md:max-w-3xl lg:max-w-5xl items-center gap-3 px-4">
         {back}
         {title ? (
           <h1 className="flex-1 truncate text-lg font-bold">{t(title)}</h1>
@@ -68,7 +68,7 @@ export function BottomNav() {
   const { t } = useT();
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t bg-card pb-[env(safe-area-inset-bottom)]">
-      <ul className="mx-auto grid max-w-xl grid-cols-5">
+      <ul className="mx-auto grid max-w-xl md:max-w-3xl lg:max-w-5xl grid-cols-5">
         {NAV.map(({ to, label, icon: Icon }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           const isUpload = to === "/upload";
@@ -100,5 +100,5 @@ export function BottomNav() {
 }
 
 export function Page({ children }: { children: ReactNode }) {
-  return <main className="mx-auto max-w-xl pb-24 animate-rise">{children}</main>;
+  return <main className="mx-auto max-w-xl md:max-w-3xl lg:max-w-5xl pb-24 animate-rise">{children}</main>;
 }
