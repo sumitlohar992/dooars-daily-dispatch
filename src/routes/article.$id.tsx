@@ -1,7 +1,7 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useRouter, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
-import { ArrowLeft, Bookmark, Heart, Share2, Send, Link2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Bookmark, Heart, Share2, Send, Link2, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/article/$id")({
 function ArticlePage() {
   const { id } = Route.useParams();
   const router = useRouter();
-  const { user, displayName } = useAuth();
+  const { user, displayName, isAdmin } = useAuth();
   const qc = useQueryClient();
   const [comment, setComment] = useState("");
 
@@ -48,6 +48,36 @@ function ArticlePage() {
       ]);
       return { likes: r.count ?? 0, comments: c.data ?? [], liked: !!mine?.data, saved: !!bm?.data };
     },
+  });
+
+  useEffect(() => { supabase.rpc("record_view", { _article_id: id }).then(() => {}); }, [id]);
+  const authorId = art.data?.author_id;
+  const follow = useQuery({
+    queryKey: ["follow", authorId, user?.id],
+    enabled: !!authorId,
+    queryFn: async () => {
+      const [c, me] = await Promise.all([
+        supabase.from("follows").select("*", { count: "exact", head: true }).eq("following_id", authorId!),
+        user ? supabase.from("follows").select("follower_id").eq("follower_id", user.id).eq("following_id", authorId!).maybeSingle() : null,
+      ]);
+      return { count: c.count ?? 0, following: !!me?.data };
+    },
+  });
+  const toggleFollow = useMutation({
+    mutationFn: async () => {
+      if (!user || !authorId) return;
+      if (follow.data?.following) await supabase.from("follows").delete().eq("follower_id", user.id).eq("following_id", authorId);
+      else await supabase.from("follows").insert({ follower_id: user.id, following_id: authorId });
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["follow", authorId] }),
+  });
+  const remove = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("articles").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { qc.invalidateQueries(); toast.success("Post deleted"); router.navigate({ to: "/profile" }); },
+    onError: () => toast.error("Could not delete"),
   });
 
   const needLogin = () => { toast("Please sign in first"); router.navigate({ to: "/auth" }); };
@@ -101,12 +131,23 @@ function ArticlePage() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold">{a.author_name}</p>
-              <p className="text-xs text-muted-foreground">{timeAgo(a.created_at)}</p>
+              <p className="text-xs text-muted-foreground">{timeAgo(a.created_at)}{a.author_id ? ` · ${follow.data?.count ?? 0} followers` : ""}</p>
             </div>
+            {a.author_id && a.author_id !== user?.id && (
+              <button onClick={() => (user ? toggleFollow.mutate() : needLogin())} className={`rounded-full px-3 py-1.5 text-xs font-bold ${follow.data?.following ? "bg-muted text-muted-foreground" : "bg-sky text-secondary-foreground"}`}>
+                {follow.data?.following ? "Following" : "Follow"}
+              </button>
+            )}
             <button onClick={() => (user ? toggle.mutate("bookmarks") : needLogin())} aria-label="Save" className="rounded-full p-2 hover:bg-muted">
               <Bookmark className={`h-5 w-5 ${social.data?.saved ? "fill-sky text-sky" : ""}`} />
             </button>
           </div>
+          {user && (a.author_id === user.id || isAdmin) && (
+            <div className="mt-3 flex gap-2">
+              <Link to="/upload" search={{ edit: a.id }} className="flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-semibold"><Pencil className="h-4 w-4" />Edit</Link>
+              <button onClick={() => { if (confirm("Delete this post permanently?")) remove.mutate(); }} className="flex items-center gap-1.5 rounded-full border border-destructive px-4 py-1.5 text-sm font-semibold text-destructive"><Trash2 className="h-4 w-4" />Delete</button>
+            </div>
+          )}
           {a.summary && <p className="mt-4 text-lg font-medium text-muted-foreground">{a.summary}</p>}
           <RichText text={a.body} />
           {a.source_url && (
@@ -114,7 +155,7 @@ function ArticlePage() {
               Read full story on {a.source_name ?? "source"}
             </a>
           )}
-          {a.video_url && <video src={a.video_url} controls playsInline className="mt-4 w-full rounded-xl bg-foreground" />}
+          {a.video_url && <video src={a.video_url} poster={a.image_url ?? undefined} controls playsInline className="mt-4 w-full rounded-xl bg-foreground" />}
 
           <div className="mt-6 flex items-center gap-2">
             <button

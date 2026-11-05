@@ -11,9 +11,12 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CategoriesRouteImport } from './routes/categories'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DownloadRouteImport } from './routes/download'
+import { Route as LiveRouteImport } from './routes/live'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as SavedRouteImport } from './routes/saved'
 import { Route as SearchRouteImport } from './routes/search'
@@ -21,6 +24,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
+import { Route as ApiPublicAiRouteImport } from './routes/api/public/ai'
 import { Route as ApiPublicCronGoogleNewsRouteImport } from './routes/api/public/cron/google-news'
 
 const IndexRoute = IndexRouteImport.update({
@@ -33,6 +37,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AssistantRoute = AssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -43,9 +52,19 @@ const CategoriesRoute = CategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DownloadRoute = DownloadRouteImport.update({
   id: '/download',
   path: '/download',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LiveRoute = LiveRouteImport.update({
+  id: '/live',
+  path: '/live',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -83,6 +102,11 @@ const ArticleIdRoute = ArticleIdRouteImport.update({
   path: '/article/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAiRoute = ApiPublicAiRouteImport.update({
+  id: '/api/public/ai',
+  path: '/api/public/ai',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicCronGoogleNewsRoute = ApiPublicCronGoogleNewsRouteImport.update({
   id: '/api/public/cron/google-news',
   path: '/api/public/cron/google-news',
@@ -92,9 +116,12 @@ const ApiPublicCronGoogleNewsRoute = ApiPublicCronGoogleNewsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
+  '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -102,14 +129,18 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/ai': typeof ApiPublicAiRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
+  '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -117,15 +148,19 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/ai': typeof ApiPublicAiRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/assistant': typeof AssistantRoute
   '/auth': typeof AuthRoute
   '/categories': typeof CategoriesRoute
+  '/dashboard': typeof DashboardRoute
   '/download': typeof DownloadRoute
+  '/live': typeof LiveRoute
   '/profile': typeof ProfileRoute
   '/saved': typeof SavedRoute
   '/search': typeof SearchRoute
@@ -133,6 +168,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
+  '/api/public/ai': typeof ApiPublicAiRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRouteTypes {
@@ -140,9 +176,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
+    | '/live'
     | '/profile'
     | '/saved'
     | '/search'
@@ -150,14 +189,18 @@ export interface FileRouteTypes {
     | '/terms'
     | '/upload'
     | '/article/$id'
+    | '/api/public/ai'
     | '/api/public/cron/google-news'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
+    | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
+    | '/live'
     | '/profile'
     | '/saved'
     | '/search'
@@ -165,14 +208,18 @@ export interface FileRouteTypes {
     | '/terms'
     | '/upload'
     | '/article/$id'
+    | '/api/public/ai'
     | '/api/public/cron/google-news'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/assistant'
     | '/auth'
     | '/categories'
+    | '/dashboard'
     | '/download'
+    | '/live'
     | '/profile'
     | '/saved'
     | '/search'
@@ -180,15 +227,19 @@ export interface FileRouteTypes {
     | '/terms'
     | '/upload'
     | '/article/$id'
+    | '/api/public/ai'
     | '/api/public/cron/google-news'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AssistantRoute: typeof AssistantRoute
   AuthRoute: typeof AuthRoute
   CategoriesRoute: typeof CategoriesRoute
+  DashboardRoute: typeof DashboardRoute
   DownloadRoute: typeof DownloadRoute
+  LiveRoute: typeof LiveRoute
   ProfileRoute: typeof ProfileRoute
   SavedRoute: typeof SavedRoute
   SearchRoute: typeof SearchRoute
@@ -196,6 +247,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   UploadRoute: typeof UploadRoute
   ArticleIdRoute: typeof ArticleIdRoute
+  ApiPublicAiRoute: typeof ApiPublicAiRoute
   ApiPublicCronGoogleNewsRoute: typeof ApiPublicCronGoogleNewsRoute
 }
 
@@ -215,6 +267,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/assistant': {
+      id: '/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AssistantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -229,11 +288,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/download': {
       id: '/download'
       path: '/download'
       fullPath: '/download'
       preLoaderRoute: typeof DownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/live': {
+      id: '/live'
+      path: '/live'
+      fullPath: '/live'
+      preLoaderRoute: typeof LiveRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -285,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ai': {
+      id: '/api/public/ai'
+      path: '/api/public/ai'
+      fullPath: '/api/public/ai'
+      preLoaderRoute: typeof ApiPublicAiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/google-news': {
       id: '/api/public/cron/google-news'
       path: '/api/public/cron/google-news'
@@ -298,9 +378,12 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AssistantRoute: AssistantRoute,
   AuthRoute: AuthRoute,
   CategoriesRoute: CategoriesRoute,
+  DashboardRoute: DashboardRoute,
   DownloadRoute: DownloadRoute,
+  LiveRoute: LiveRoute,
   ProfileRoute: ProfileRoute,
   SavedRoute: SavedRoute,
   SearchRoute: SearchRoute,
@@ -308,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   UploadRoute: UploadRoute,
   ArticleIdRoute: ArticleIdRoute,
+  ApiPublicAiRoute: ApiPublicAiRoute,
   ApiPublicCronGoogleNewsRoute: ApiPublicCronGoogleNewsRoute,
 }
 export const routeTree = rootRouteImport
