@@ -6,7 +6,7 @@ import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/l
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
-import { RefreshCw, Download, Bot } from "lucide-react";
+import { RefreshCw, Radio, MapPin, Bot } from "lucide-react";
 
 function SlideBar() {
   const { data } = useQuery({
@@ -29,16 +29,13 @@ function SlideBar() {
   );
 }
 
-function AppBanner() {
-  const [web, setWeb] = useState(false);
-  useEffect(() => { setWeb(!(window as unknown as { Capacitor?: unknown }).Capacitor && !window.matchMedia("(display-mode: standalone)").matches); }, []);
-  if (!web) return null;
+function QuickActions() {
   return (
-    <Link to="/download" className="mx-4 mt-3 flex items-center gap-3 rounded-2xl bg-sky-soft p-3">
-      <img src="/logo.png" alt="" className="h-10 w-10 rounded-xl" />
-      <span className="flex-1 text-sm font-bold text-primary">Get the Dooars Khabar app</span>
-      <span className="flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground"><Download className="h-4 w-4" />Download</span>
-    </Link>
+    <div className="grid grid-cols-3 gap-2 px-4 pt-3">
+      <Link to="/live" className="flex items-center justify-center gap-1.5 rounded-full bg-breaking py-2 text-sm font-bold text-breaking-foreground"><Radio className="h-4 w-4" />Go Live</Link>
+      <Link to="/assistant" search={{ mode: "ask" }} className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"><MapPin className="h-4 w-4" />Ask Dooars</Link>
+      <Link to="/assistant" search={{ mode: "help" }} className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"><Bot className="h-4 w-4" />Help</Link>
+    </div>
   );
 }
 
@@ -49,6 +46,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Latest local, West Bengal, national, politics, sports and entertainment news from Dooars Khabar." },
       { property: "og:title", content: "Dooars Khabar — Breaking news" },
       { property: "og:description", content: "Latest local, West Bengal and national news from Dooars Khabar." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Home,
@@ -173,7 +172,7 @@ function Home() {
         </div>
       </div>
       <Page>
-        <AppBanner />
+        <QuickActions />
         <div className="flex gap-2 px-4 pt-3">
           <button onClick={() => q.refetch()} disabled={q.isRefetching} className="flex flex-1 items-center justify-center gap-2 rounded-full border bg-card py-2 text-sm font-bold text-primary">
             <RefreshCw className={`h-4 w-4 ${q.isRefetching ? "animate-spin" : ""}`} />{q.isRefetching ? "Refreshing…" : "Refresh news"}
