@@ -52,6 +52,26 @@ function ArticlePage() {
 
   useEffect(() => { supabase.rpc("record_view", { _article_id: id }).then(() => {}); }, [id]);
   const authorId = art.data?.author_id;
+  const hasMedia = !!(art.data?.image_url || art.data?.video_url);
+  useEffect(() => {
+    if (!authorId || authorId === user?.id || !hasMedia || !user) return;
+    const recordWatch = (active: boolean) => {
+      supabase.rpc("record_media_watch", { _article_id: id, _active: active }).then(({ error }) => {
+        if (error) console.error("Could not record media watch time", error);
+      });
+    };
+    recordWatch(document.visibilityState === "visible");
+    const visibilityChanged = () => recordWatch(document.visibilityState === "visible");
+    document.addEventListener("visibilitychange", visibilityChanged);
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === "visible") recordWatch(true);
+    }, 15_000);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", visibilityChanged);
+      recordWatch(false);
+    };
+  }, [authorId, hasMedia, id, user]);
   const follow = useQuery({
     queryKey: ["follow", authorId, user?.id],
     enabled: !!authorId,

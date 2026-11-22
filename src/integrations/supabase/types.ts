@@ -24,6 +24,7 @@ export type Database = {
           id: string
           image_url: string | null
           is_breaking: boolean
+          media_watch_seconds: number
           source_name: string | null
           source_url: string | null
           summary: string | null
@@ -40,6 +41,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_breaking?: boolean
+          media_watch_seconds?: number
           source_name?: string | null
           source_url?: string | null
           summary?: string | null
@@ -56,6 +58,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_breaking?: boolean
+          media_watch_seconds?: number
           source_name?: string | null
           source_url?: string | null
           summary?: string | null
@@ -335,6 +338,10 @@ export type Database = {
         Returns: boolean
       }
       record_view: { Args: { _article_id: string }; Returns: undefined }
+      record_media_watch: {
+        Args: { _article_id: string; _active: boolean }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"

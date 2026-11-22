@@ -65,7 +65,7 @@ function ProfilePage() {
               <p className="truncate text-sm opacity-80">{user.email ?? user.phone}</p>
               <p className="mt-1 text-xs opacity-80">{mine.data?.length ?? 0} {tr("published")}</p>
             </div>
-            <Link to="/dashboard" aria-label="My dashboard" className="rounded-full p-2 hover:bg-primary-foreground/10"><LayoutDashboard className="h-5 w-5" /></Link>
+            <Link to="/dashboard" aria-label="Creator dashboard" className="rounded-full p-2 hover:bg-primary-foreground/10"><LayoutDashboard className="h-5 w-5" /></Link>
             <Link to="/settings" aria-label="Settings" className="rounded-full p-2 hover:bg-primary-foreground/10"><Settings className="h-5 w-5" /></Link>
             <button onClick={signOut} aria-label="Sign out" className="rounded-full p-2 hover:bg-primary-foreground/10"><LogOut className="h-5 w-5" /></button>
           </div>

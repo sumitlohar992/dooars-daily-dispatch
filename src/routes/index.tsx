@@ -6,7 +6,7 @@ import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/l
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
-import { RefreshCw, Radio, MapPin, Bot } from "lucide-react";
+import { Radio, MapPin, Bot } from "lucide-react";
 
 function SlideBar() {
   const { data } = useQuery({
@@ -107,7 +107,7 @@ function Featured({ items }: { items: Article[] }) {
         className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
       >
         {items.map((a) => (
-          <Link key={a.id} to="/article/$id" params={{ id: a.id }} className="relative aspect-[16/10] w-full shrink-0 snap-start bg-muted">
+          <Link key={a.id} to="/article/$id" params={{ id: a.id }} className="relative aspect-[4/3] w-full shrink-0 snap-start bg-muted sm:aspect-[16/9]">
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
             <div className="absolute inset-0 bg-fade" />
             <div className="absolute inset-x-0 bottom-0 p-4 pb-7 text-primary-foreground">
@@ -173,11 +173,6 @@ function Home() {
       </div>
       <Page>
         <QuickActions />
-        <div className="flex gap-2 px-4 pt-3">
-          <button onClick={() => q.refetch()} disabled={q.isRefetching} className="flex flex-1 items-center justify-center gap-2 rounded-full border bg-card py-2 text-sm font-bold text-primary">
-            <RefreshCw className={`h-4 w-4 ${q.isRefetching ? "animate-spin" : ""}`} />{q.isRefetching ? "Refreshing…" : "Refresh news"}
-          </button>
-        </div>
         {q.isLoading ? (
           Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
         ) : (
