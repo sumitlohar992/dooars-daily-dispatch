@@ -107,7 +107,7 @@ function AdminPage() {
           <button onClick={pull} disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3 font-bold text-primary-foreground disabled:opacity-60">
             <Newspaper className="h-5 w-5" />{busy ? "Fetching…" : "Fetch Dooars news from Google now"}
           </button>
-          <p className="mt-2 text-center text-xs text-muted-foreground">This also runs automatically every hour.</p>
+          <p className="mt-2 text-center text-xs text-muted-foreground">This also runs automatically every 30 minutes.</p>
         </div>
 
         <h2 className="px-4 pt-6 font-display text-lg font-extrabold">Users</h2>

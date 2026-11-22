@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Bold, Heading2, ImagePlus, Italic, Loader2, Video, X } from "lucide-react";
+import { Bold, Heading2, ImagePlus, Italic, Loader2, Sparkles, Video, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -62,21 +62,70 @@ function UploadPage() {
   const [category, setCategory] = useState<string>("Local");
   const [body, setBody] = useState("");
   const [image, setImage] = useState<File | null>(null);
+  const [imageIsAi, setImageIsAi] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
   const { t } = useT();
-  const [existing, setExisting] = useState<{ image_url: string | null; video_url: string | null } | null>(null);
+  const [existing, setExisting] = useState<{
+    image_url: string | null;
+    image_is_ai: boolean;
+    video_url: string | null;
+  } | null>(null);
   useEffect(() => {
     if (!edit) { setExisting(null); return; }
     supabase.from("articles").select("*").eq("id", edit).maybeSingle().then(({ data }) => {
       if (!data) return;
       setTitle(data.title); setCategory(data.category); setBody(data.body);
-      setExisting({ image_url: data.image_url, video_url: data.video_url });
+      setExisting({
+        image_url: data.image_url,
+        image_is_ai: data.image_is_ai,
+        video_url: data.video_url,
+      });
     });
   }, [edit]);
 
   if (loading) return <><Header title={t("uploadNews")} /><Page><div /></Page></>;
   if (!user) return <><Header title={t("uploadNews")} /><Page><SignInPrompt message={t("signInUpload")} /></Page></>;
+
+  const generateAiImage = async () => {
+    if (title.trim().length < 5) {
+      toast.error(t("enterHeadlineForAIImage"));
+      return;
+    }
+    setGeneratingImage(true);
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      const accessToken = data.session?.access_token;
+      if (!accessToken) throw new Error(t("signInUpload"));
+      const response = await fetch("/api/public/ai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ mode: "image", title: title.trim(), category }),
+      });
+      if (!response.ok) {
+        const result = await response.json().catch(() => null) as { error?: unknown } | null;
+        throw new Error(
+          typeof result?.error === "string" ? result.error : "Image generation failed.",
+        );
+      }
+      const imageBlob = await response.blob();
+      if (!imageBlob.type.startsWith("image/")) {
+        throw new Error("The AI service did not return an image.");
+      }
+      const extension = imageBlob.type === "image/jpeg" ? "jpg" : imageBlob.type.split("/")[1];
+      setImage(new File([imageBlob], `ai-article-image.${extension}`, { type: imageBlob.type }));
+      setImageIsAi(true);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Image generation failed.");
+    } finally {
+      setGeneratingImage(false);
+    }
+  };
 
   const wrap = (before: string, after = before) => {
     const el = bodyRef.current;
@@ -96,9 +145,10 @@ function UploadPage() {
     try {
       const thumb = !image && video ? await videoThumbnail(video) : null;
       const image_url = image ? await uploadFile(user.id, image) : thumb ? await uploadFile(user.id, thumb) : existing?.image_url ?? null;
+      const image_is_ai = image ? imageIsAi : thumb ? false : existing?.image_is_ai ?? false;
       const video_url = video ? await uploadFile(user.id, video) : existing?.video_url ?? null;
       const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
-      const fields = { title: title.trim(), category, body, summary, image_url, video_url };
+      const fields = { title: title.trim(), category, body, summary, image_url, image_is_ai, video_url };
       const { data, error } = edit
         ? await supabase.from("articles").update(fields).eq("id", edit).select("id").single()
         : await supabase.from("articles").insert({ ...fields, author_id: user.id, author_name: displayName }).select("id").single();
@@ -142,7 +192,32 @@ function UploadPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <MediaPicker icon={<ImagePlus className="h-6 w-6" />} label={t("addPhoto")} accept="image/*" file={image} onChange={setImage} />
+            <div className="space-y-2">
+              <MediaPicker
+                icon={<ImagePlus className="h-6 w-6" />}
+                label={t("addPhoto")}
+                accept="image/*"
+                file={image}
+                onChange={(file) => {
+                  setImage(file);
+                  setImageIsAi(false);
+                }}
+              />
+              <button
+                type="button"
+                onClick={generateAiImage}
+                disabled={generatingImage || busy}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold disabled:opacity-50"
+              >
+                {generatingImage ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
+                {generatingImage ? t("generatingAIImage") : t("generateAIImage")}
+              </button>
+              <p className="text-xs text-muted-foreground">{t("aiImageHelp")}</p>
+            </div>
             <MediaPicker icon={<Video className="h-6 w-6" />} label={t("addVideo")} accept="video/*" file={video} onChange={setVideo} />
           </div>
 

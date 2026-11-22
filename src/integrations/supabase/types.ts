@@ -23,6 +23,7 @@ export type Database = {
           created_at: string
           id: string
           image_url: string | null
+          image_is_ai: boolean
           is_breaking: boolean
           media_watch_seconds: number
           source_name: string | null
@@ -40,6 +41,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_is_ai?: boolean
           is_breaking?: boolean
           media_watch_seconds?: number
           source_name?: string | null
@@ -57,6 +59,7 @@ export type Database = {
           created_at?: string
           id?: string
           image_url?: string | null
+          image_is_ai?: boolean
           is_breaking?: boolean
           media_watch_seconds?: number
           source_name?: string | null
@@ -266,6 +269,30 @@ export type Database = {
           link?: string | null
           sort?: number
           title?: string
+        }
+        Relationships: []
+      }
+      social_live_streams: {
+        Row: {
+          created_at: string
+          id: string
+          platform: string
+          stream_url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          platform: string
+          stream_url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          platform?: string
+          stream_url?: string
+          user_id?: string
         }
         Relationships: []
       }

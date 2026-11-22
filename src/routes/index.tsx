@@ -110,6 +110,11 @@ function Featured({ items }: { items: Article[] }) {
           <Link key={a.id} to="/article/$id" params={{ id: a.id }} className="relative aspect-[4/3] w-full shrink-0 snap-start bg-muted sm:aspect-[16/9]">
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
             <div className="absolute inset-0 bg-fade" />
+            {a.image_is_ai && (
+              <span className="absolute right-3 top-3 rounded bg-foreground/80 px-2 py-1 text-[10px] font-semibold text-background">
+                {t("aiIllustration")}
+              </span>
+            )}
             <div className="absolute inset-x-0 bottom-0 p-4 pb-7 text-primary-foreground">
               <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{t(a.category)}</span>
               <h2 className="mt-2 line-clamp-2 text-xl font-extrabold leading-tight">{a.title}</h2>

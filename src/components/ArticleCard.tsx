@@ -12,19 +12,26 @@ export function ArticleCard({ a }: { a: Article }) {
       className="flex gap-3 border-b bg-card p-4 transition-colors active:bg-muted"
     >
       <div className="min-w-0 flex-1">
-        <span className="text-[11px] font-bold uppercase tracking-wide text-sky">{t(a.category)}</span>
+        <span className="text-[11px] font-bold uppercase tracking-wide text-sky">
+          {t(a.category)}
+        </span>
         <h3 className="mt-0.5 line-clamp-3 text-[15px] font-bold leading-snug">{a.title}</h3>
         <p className="mt-1.5 text-xs text-muted-foreground">
           {a.author_name} · {timeAgo(a.created_at)}
         </p>
       </div>
-      <div className="h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
+      <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-muted">
         {a.image_url ? (
           <img src={a.image_url} alt="" loading="lazy" className="h-full w-full object-cover" />
         ) : (
           <div className="flex h-full items-center justify-center text-muted-foreground">
             <Newspaper className="h-6 w-6" />
           </div>
+        )}
+        {a.image_is_ai && (
+          <span className="absolute bottom-1 left-1 rounded bg-foreground/80 px-1.5 py-0.5 text-[9px] font-semibold text-background">
+            {t("aiIllustration")}
+          </span>
         )}
       </div>
     </Link>

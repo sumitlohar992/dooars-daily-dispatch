@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { shareArticle, shareLinks, timeAgo } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
 import { RichText } from "@/components/RichText";
+import { useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/article/$id")({
   head: () => ({
@@ -24,6 +25,7 @@ export const Route = createFileRoute("/article/$id")({
 
 function ArticlePage() {
   const { id } = Route.useParams();
+  const { t } = useT();
   const router = useRouter();
   const { user, displayName, isAdmin } = useAuth();
   const qc = useQueryClient();
@@ -141,7 +143,14 @@ function ArticlePage() {
     <>
       <Header title={a.category} back={back} />
       <Page>
-        {a.image_url && <img src={a.image_url} alt="" className="aspect-[16/10] w-full object-cover" />}
+        {a.image_url && (
+          <>
+            <img src={a.image_url} alt="" className="aspect-[16/10] w-full object-cover" />
+            {a.image_is_ai && (
+              <p className="px-4 pt-2 text-xs text-muted-foreground">{t("aiIllustration")}</p>
+            )}
+          </>
+        )}
         <article className="bg-card px-4 pb-6 pt-4">
           <span className="text-xs font-bold uppercase tracking-wider text-sky">{a.category}</span>
           <h1 className="mt-1 text-2xl font-extrabold leading-tight">{a.title}</h1>
