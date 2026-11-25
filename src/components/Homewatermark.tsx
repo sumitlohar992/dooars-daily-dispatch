@@ -1,3 +1,17 @@
+import { HomeWatermark } from "../components/HomeWatermark";
+
+export function HomePage() {
+  return (
+    <div className="relative min-h-screen">
+      <HomeWatermark />
+
+      <div className="relative z-10">
+        {/* Put your existing home page sections here */}
+      </div>
+    </div>
+  );
+}
+
 export function HomeWatermark() {
   return (
     <div
@@ -7,7 +21,7 @@ export function HomeWatermark() {
       <img
         src="/watermark.png"
         alt=""
-        className="h-full w-full object-cover object-center opacity-[0.2] grayscale"
+        className="h-full w-full object-cover object-center opacity-[0.2] "
       />
       <div className="from-background/70 via-background/40 to-background/80 absolute inset-0 bg-gradient-to-b" />
     </div>
