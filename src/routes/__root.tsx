@@ -17,6 +17,7 @@ import { BottomNav } from "@/components/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/lib/i18n";
 import { TermsGate } from "@/components/Terms";
+import { HomeWatermark } from "@/components/Homewatermark";
 
 function NotFoundComponent() {
   return (
@@ -169,6 +170,7 @@ function RootComponent() {
         <AuthProvider>
           <Splash />
           <TermsGate />
+          <HomeWatermark />
           <Outlet />
           <BottomNav />
           <Toaster position="top-center" />
