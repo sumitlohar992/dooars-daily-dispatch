@@ -102,3 +102,14 @@ export function BottomNav() {
 export function Page({ children }: { children: ReactNode }) {
   return <main className="mx-auto max-w-xl md:max-w-3xl lg:max-w-5xl pb-24 animate-rise">{children}</main>;
 }
+
+export function PageWatermark() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-x-0 bottom-16 top-14 z-0 flex items-center justify-center overflow-hidden"
+    >
+      <img src="/logo.png" alt="" className="h-64 w-64 object-contain opacity-[0.08] sm:h-80 sm:w-80" />
+    </div>
+  );
+}

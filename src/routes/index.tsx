@@ -3,7 +3,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/lib/news";
-import { Header, Page } from "@/components/AppShell";
+import { Header, Page, PageWatermark } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
@@ -109,6 +109,14 @@ function Featured({ items }: { items: Article[] }) {
         {items.map((a) => (
           <Link key={a.id} to="/article/$id" params={{ id: a.id }} className="relative aspect-[4/3] w-full shrink-0 snap-start bg-muted sm:aspect-[16/9]">
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
+            {a.image_url && (
+              <img
+                src="/logo.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute left-3 top-3 z-10 h-10 w-10 object-contain opacity-40"
+              />
+            )}
             <div className="absolute inset-0 bg-fade" />
             {a.image_is_ai && (
               <span className="absolute right-3 top-3 rounded bg-foreground/80 px-2 py-1 text-[10px] font-semibold text-background">
@@ -158,12 +166,7 @@ function Home() {
 
   return (
     <div className="relative isolate min-h-screen">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 bottom-16 top-14 z-0 flex items-center justify-center overflow-hidden"
-      >
-        <img src="/logo.png" alt="" className="h-64 w-64 object-contain opacity-[0.045] sm:h-80 sm:w-80" />
-      </div>
+      <PageWatermark />
       <div className="relative z-10">
         <Header />
         <SlideBar />
@@ -207,7 +210,7 @@ function Home() {
               {tab === "All" && rest.length > 0 && (
                 <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">{tr("latest")}</h2>
               )}
-              {rest.map((a) => <ArticleCard key={a.id} a={a} />)}
+              {rest.map((a) => <ArticleCard key={a.id} a={a} watermark />)}
               {!all.length && !q.isError && (
                 <p className="p-10 text-center text-muted-foreground">{tr("noNews")}</p>
               )}

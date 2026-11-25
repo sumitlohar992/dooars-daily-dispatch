@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { shareArticle, shareLinks, timeAgo } from "@/lib/news";
-import { Header, Page } from "@/components/AppShell";
+import { Header, Page, PageWatermark } from "@/components/AppShell";
 import { RichText } from "@/components/RichText";
 import { useT } from "@/lib/i18n";
 
@@ -140,17 +140,27 @@ function ArticlePage() {
   const onShare = async () => { if (!(await shareArticle(a))) { await navigator.clipboard.writeText(`${location.origin}/article/${a.id}`); toast("Link copied"); } };
 
   return (
-    <>
-      <Header title={a.category} back={back} />
-      <Page>
-        {a.image_url && (
-          <>
-            <img src={a.image_url} alt="" className="aspect-[16/10] w-full object-cover" />
-            {a.image_is_ai && (
-              <p className="px-4 pt-2 text-xs text-muted-foreground">{t("aiIllustration")}</p>
-            )}
-          </>
-        )}
+    <div className="relative isolate min-h-screen">
+      <PageWatermark />
+      <div className="relative z-10">
+        <Header title={a.category} back={back} />
+        <Page>
+          {a.image_url && (
+            <>
+              <div className="relative">
+                <img src={a.image_url} alt="" className="aspect-[16/10] w-full object-cover" />
+                <img
+                  src="/logo.png"
+                  alt=""
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-3 top-3 h-12 w-12 object-contain opacity-40"
+                />
+              </div>
+              {a.image_is_ai && (
+                <p className="px-4 pt-2 text-xs text-muted-foreground">{t("aiIllustration")}</p>
+              )}
+            </>
+          )}
         <article className="bg-card px-4 pb-6 pt-4">
           <span className="text-xs font-bold uppercase tracking-wider text-sky">{a.category}</span>
           <h1 className="mt-1 text-2xl font-extrabold leading-tight">{a.title}</h1>
@@ -231,7 +241,8 @@ function ArticlePage() {
             ))}
           </ul>
         </section>
-      </Page>
-    </>
+        </Page>
+      </div>
+    </div>
   );
 }

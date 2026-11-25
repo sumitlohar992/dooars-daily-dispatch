@@ -3,7 +3,7 @@ import { type Article, timeAgo } from "@/lib/news";
 import { Newspaper } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
-export function ArticleCard({ a }: { a: Article }) {
+export function ArticleCard({ a, watermark = false }: { a: Article; watermark?: boolean }) {
   const { t } = useT();
   return (
     <Link
@@ -27,6 +27,14 @@ export function ArticleCard({ a }: { a: Article }) {
           <div className="flex h-full items-center justify-center text-muted-foreground">
             <Newspaper className="h-6 w-6" />
           </div>
+        )}
+        {watermark && a.image_url && (
+          <img
+            src="/logo.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-1 right-1 h-7 w-7 object-contain opacity-40"
+          />
         )}
         {a.image_is_ai && (
           <span className="absolute bottom-1 left-1 rounded bg-foreground/80 px-1.5 py-0.5 text-[9px] font-semibold text-background">
