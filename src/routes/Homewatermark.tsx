@@ -7,7 +7,7 @@ export function HomeWatermark() {
       <img
         src="/watermark.png"
         alt=""
-        className="h-full w-full object-cover object-center opacity-[0.2] grayscale"
+        className="h-full w-full object-cover object-center opacity-[0.4] grayscale"
       />
       <div className="from-background/70 via-background/40 to-background/80 absolute inset-0 bg-gradient-to-b" />
     </div>
