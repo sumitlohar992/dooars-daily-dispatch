@@ -281,14 +281,3 @@ function Home() {
     </div>
   );
 }
-export function HomePage() {
-  return (
-    <div className="relative min-h-screen">
-      <HomeWatermark />
-
-      <div className="relative z-10">
-        {/* Put your existing home page sections here */}
-      </div>
-    </div>
-  );
-}
