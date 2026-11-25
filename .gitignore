@@ -17,6 +17,9 @@ dist-ssr
 .nitro
 *.local
 
+# Keep unused lockfiles ignored (project uses bun.lock)
+package-lock.json
+pnpm-lock.yaml
 # Wrangler / Cloudflare
 .wrangler/
 .dev.vars
