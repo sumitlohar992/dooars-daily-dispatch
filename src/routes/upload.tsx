@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { Bold, Heading2, ImagePlus, Italic, Loader2, Sparkles, Video, X } from "lucide-react";
+import { Bold, Heading2, ImagePlus, Italic, Loader2, Video, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -84,7 +84,6 @@ function UploadPage() {
   const [imageIsAi, setImageIsAi] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
-  const [generatingImage, setGeneratingImage] = useState(false);
   const { t } = useT();
   const [existing, setExisting] = useState<{
     image_url: string | null;
@@ -132,45 +131,6 @@ function UploadPage() {
         </Page>
       </>
     );
-
-  const generateAiImage = async () => {
-    if (title.trim().length < 5) {
-      toast.error(t("enterHeadlineForAIImage"));
-      return;
-    }
-    setGeneratingImage(true);
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      const accessToken = data.session?.access_token;
-      if (!accessToken) throw new Error(t("signInUpload"));
-      const response = await fetch("/api/public/ai", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ mode: "image", title: title.trim(), category }),
-      });
-      if (!response.ok) {
-        const result = (await response.json().catch(() => null)) as { error?: unknown } | null;
-        throw new Error(
-          typeof result?.error === "string" ? result.error : "Image generation failed.",
-        );
-      }
-      const imageBlob = await response.blob();
-      if (!imageBlob.type.startsWith("image/")) {
-        throw new Error("The AI service did not return an image.");
-      }
-      const extension = imageBlob.type === "image/jpeg" ? "jpg" : imageBlob.type.split("/")[1];
-      setImage(new File([imageBlob], `ai-article-image.${extension}`, { type: imageBlob.type }));
-      setImageIsAi(true);
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Image generation failed.");
-    } finally {
-      setGeneratingImage(false);
-    }
-  };
 
   const wrap = (before: string, after = before) => {
     const el = bodyRef.current;
@@ -280,20 +240,6 @@ function UploadPage() {
                   setImageIsAi(false);
                 }}
               />
-              <button
-                type="button"
-                onClick={generateAiImage}
-                disabled={generatingImage || busy}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2 text-sm font-semibold disabled:opacity-50"
-              >
-                {generatingImage ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                {generatingImage ? t("generatingAIImage") : t("generateAIImage")}
-              </button>
-              <p className="text-xs text-muted-foreground">{t("aiImageHelp")}</p>
             </div>
             <MediaPicker
               icon={<Video className="h-6 w-6" />}
@@ -384,7 +330,28 @@ function MediaPicker({
   file: File | null;
   onChange: (f: File | null) => void;
 }) {
-  const url = file ? URL.createObjectURL(file) : null;
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    if (!file) {
+      setUrl(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const selected = input.files?.[0] ?? null;
+    input.value = "";
+    if (selected && selected.size > 50 * 1024 * 1024) {
+      toast.error("File is too large (max 50MB)");
+      return;
+    }
+    onChange(selected);
+  };
+
   return (
     <div className="relative aspect-square overflow-hidden rounded-xl border-2 border-dashed border-sky bg-sky-soft">
       {url ? (
@@ -407,19 +374,7 @@ function MediaPicker({
         <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 text-sm font-semibold text-primary">
           {icon}
           {label}
-          <input
-            type="file"
-            accept={accept}
-            className="hidden"
-            onChange={(e) => {
-              const f = e.target.files?.[0] ?? null;
-              if (f && f.size > 50 * 1024 * 1024) {
-                toast.error("File is too large (max 50MB)");
-                return;
-              }
-              onChange(f);
-            }}
-          />
+          <input type="file" accept={accept} className="hidden" onChange={handleFileChange} />
         </label>
       )}
     </div>
