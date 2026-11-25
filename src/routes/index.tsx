@@ -7,7 +7,6 @@ import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
-import { HomeWatermark } from "../components/HomeWatermark";
 
 
 function SlideBar() {
@@ -281,17 +280,3 @@ function Home() {
     </div>
   );
 }
-<div className="relative min-h-screen">
-  {/* Watermark overlay */}
-  <img
-    src="/watermark.png"
-    alt=""
-    aria-hidden="true"
-    className="pointer-events-none fixed inset-0 z-0 m-auto h-64 w-64 object-contain opacity-10 select-none"
-  />
-
-  {/* Home page content */}
-  <div className="relative z-10">
-    {/* Your existing home page sections */}
-  </div>
-</div>
