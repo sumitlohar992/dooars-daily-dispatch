@@ -14,7 +14,10 @@ export const Route = createFileRoute("/profile")({
   head: () => ({
     meta: [
       { title: "My profile — Dooars Khabar" },
-      { name: "description", content: "Your profile, saved stories and published news on Dooars Khabar." },
+      {
+        name: "description",
+        content: "Your profile, saved stories and published news on Dooars Khabar.",
+      },
       { property: "og:title", content: "Profile — Dooars Khabar" },
       { property: "og:description", content: "Your Dooars Khabar profile." },
     ],
@@ -32,14 +35,34 @@ function ProfilePage() {
     queryKey: ["my-articles", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const { data, error } = await supabase.from("articles").select("*").eq("author_id", user!.id).order("created_at", { ascending: false });
+      const { data, error } = await supabase
+        .from("articles")
+        .select("*")
+        .eq("author_id", user!.id)
+        .order("created_at", { ascending: false });
       if (error) throw error;
       return data;
     },
   });
 
-  if (loading) return <><Header title={tr("profile")} /><Page><div /></Page></>;
-  if (!user) return <><Header title={tr("profile")} /><Page><SignInPrompt message={tr("signInProfile")} /></Page></>;
+  if (loading)
+    return (
+      <>
+        <Header title={tr("profile")} />
+        <Page>
+          <div />
+        </Page>
+      </>
+    );
+  if (!user)
+    return (
+      <>
+        <Header title={tr("profile")} />
+        <Page>
+          <SignInPrompt message={tr("signInProfile")} />
+        </Page>
+      </>
+    );
 
   const avatar = user.user_metadata?.["avatar_url"] as string | undefined;
   const signOut = async () => {
@@ -56,23 +79,53 @@ function ProfilePage() {
         <div className="bg-brand px-4 pb-6 pt-2 text-primary-foreground">
           <div className="flex items-center gap-4">
             {avatar ? (
-              <img src={avatar} alt="" className="h-16 w-16 rounded-full border-2 border-sky object-cover" />
+              <img
+                src={avatar}
+                alt=""
+                className="h-16 w-16 rounded-full border-2 border-sky object-cover"
+              />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky font-display text-2xl font-black text-secondary-foreground">{displayName[0]?.toUpperCase()}</div>
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-sky font-display text-2xl font-black text-secondary-foreground">
+                {displayName[0]?.toUpperCase()}
+              </div>
             )}
             <div className="min-w-0 flex-1">
               <p className="truncate font-display text-xl font-extrabold">{displayName}</p>
               <p className="truncate text-sm opacity-80">{user.email ?? user.phone}</p>
-              <p className="mt-1 text-xs opacity-80">{mine.data?.length ?? 0} {tr("published")}</p>
+              <p className="mt-1 text-xs opacity-80">
+                {mine.data?.length ?? 0} {tr("published")}
+              </p>
             </div>
-            <Link to="/dashboard" aria-label="Creator dashboard" className="rounded-full p-2 hover:bg-primary-foreground/10"><LayoutDashboard className="h-5 w-5" /></Link>
-            <Link to="/settings" aria-label="Settings" className="rounded-full p-2 hover:bg-primary-foreground/10"><Settings className="h-5 w-5" /></Link>
-            <button onClick={signOut} aria-label="Sign out" className="rounded-full p-2 hover:bg-primary-foreground/10"><LogOut className="h-5 w-5" /></button>
+            <Link
+              to="/dashboard"
+              aria-label="Creator dashboard"
+              className="rounded-full p-2 hover:bg-primary-foreground/10"
+            >
+              <LayoutDashboard className="h-5 w-5" />
+            </Link>
+            <Link
+              to="/settings"
+              aria-label="Settings"
+              className="rounded-full p-2 hover:bg-primary-foreground/10"
+            >
+              <Settings className="h-5 w-5" />
+            </Link>
+            <button
+              onClick={signOut}
+              aria-label="Sign out"
+              className="rounded-full p-2 hover:bg-primary-foreground/10"
+            >
+              <LogOut className="h-5 w-5" />
+            </button>
           </div>
         </div>
         <div className="sticky top-14 z-10 grid grid-cols-2 border-b bg-card">
           {(["posts", "saved"] as const).map((t) => (
-            <button key={t} onClick={() => setTab(t)} className={`border-b-2 py-3 text-sm font-bold ${tab === t ? "border-sky text-primary" : "border-transparent text-muted-foreground"}`}>
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`border-b-2 py-3 text-sm font-bold ${tab === t ? "border-sky text-primary" : "border-transparent text-muted-foreground"}`}
+            >
               {t === "posts" ? tr("myNews") : tr("saved")}
             </button>
           ))}

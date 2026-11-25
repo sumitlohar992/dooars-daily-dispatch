@@ -19,11 +19,12 @@ export const Route = createFileRoute("/api/public/ai")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const body = await request.json().catch(() => null) as AiRequest | null;
+        const body = (await request.json().catch(() => null)) as AiRequest | null;
         if (!body) return Response.json({ error: "Invalid request." }, { status: 400 });
 
         const apiKey = process.env["LOVABLE_API_KEY"];
-        if (!apiKey) return Response.json({ error: "AI generation is not configured." }, { status: 503 });
+        if (!apiKey)
+          return Response.json({ error: "AI generation is not configured." }, { status: 503 });
 
         const openai = createOpenAI({
           baseURL: "https://ai.gateway.lovable.dev/v1",
@@ -33,12 +34,16 @@ export const Route = createFileRoute("/api/public/ai")({
 
         if (body.mode === "image") {
           const title = typeof body.title === "string" ? body.title.trim().slice(0, 150) : "";
-          const category = typeof body.category === "string" ? body.category.trim().slice(0, 40) : "";
+          const category =
+            typeof body.category === "string" ? body.category.trim().slice(0, 40) : "";
           if (!title) return Response.json({ error: "A headline is required." }, { status: 400 });
 
           const authorization = request.headers.get("authorization");
           if (!authorization?.startsWith("Bearer ")) {
-            return Response.json({ error: "Sign in to generate an article image." }, { status: 401 });
+            return Response.json(
+              { error: "Sign in to generate an article image." },
+              { status: 401 },
+            );
           }
           const supabaseUrl = process.env["SUPABASE_URL"];
           const supabaseKey = process.env["SUPABASE_PUBLISHABLE_KEY"];
@@ -48,7 +53,9 @@ export const Route = createFileRoute("/api/public/ai")({
           const supabase = createClient(supabaseUrl, supabaseKey, {
             auth: { persistSession: false, autoRefreshToken: false },
           });
-          const { data, error } = await supabase.auth.getClaims(authorization.slice("Bearer ".length));
+          const { data, error } = await supabase.auth.getClaims(
+            authorization.slice("Bearer ".length),
+          );
           if (error || !data?.claims?.sub) {
             return Response.json({ error: "Your sign-in session is invalid." }, { status: 401 });
           }
@@ -70,7 +77,10 @@ export const Route = createFileRoute("/api/public/ai")({
               },
             });
           } catch (e) {
-            return Response.json({ error: e instanceof Error ? e.message : "Image generation failed." }, { status: 502 });
+            return Response.json(
+              { error: e instanceof Error ? e.message : "Image generation failed." },
+              { status: 502 },
+            );
           }
         }
 
@@ -89,18 +99,52 @@ export const Route = createFileRoute("/api/public/ai")({
                 typeof message.content === "string",
             )
           : [];
-        const history = (messages ?? []).slice(-10).map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
+        const history = (messages ?? [])
+          .slice(-10)
+          .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) }));
         if (!history.length) return Response.json({ error: "No question" }, { status: 400 });
         let system = HELP;
         if (mode === "ask") {
           const q = history[history.length - 1]!.content;
-          const words = q.toLowerCase().match(/[\p{L}\p{N}]{4,}/gu)?.slice(0, 6) ?? [];
-          const sb = createClient(process.env["SUPABASE_URL"]!, process.env["SUPABASE_PUBLISHABLE_KEY"]!, { auth: { persistSession: false, autoRefreshToken: false } });
-          let query = sb.from("articles").select("id,title,summary,body,created_at").order("created_at", { ascending: false }).limit(12);
-          if (words.length) query = query.or(words.map((w) => `title.ilike.%${w.replace(/[,()%]/g, "")}%,body.ilike.%${w.replace(/[,()%]/g, "")}%`).join(","));
+          const words =
+            q
+              .toLowerCase()
+              .match(/[\p{L}\p{N}]{4,}/gu)
+              ?.slice(0, 6) ?? [];
+          const sb = createClient(
+            process.env["SUPABASE_URL"]!,
+            process.env["SUPABASE_PUBLISHABLE_KEY"]!,
+            { auth: { persistSession: false, autoRefreshToken: false } },
+          );
+          let query = sb
+            .from("articles")
+            .select("id,title,summary,body,created_at")
+            .order("created_at", { ascending: false })
+            .limit(12);
+          if (words.length)
+            query = query.or(
+              words
+                .map(
+                  (w) =>
+                    `title.ilike.%${w.replace(/[,()%]/g, "")}%,body.ilike.%${w.replace(/[,()%]/g, "")}%`,
+                )
+                .join(","),
+            );
           let { data } = await query;
-          if (!data?.length) data = (await sb.from("articles").select("id,title,summary,body,created_at").order("created_at", { ascending: false }).limit(12)).data;
-          const ctx = (data ?? []).map((a) => `[${a.id}] ${a.title} (${a.created_at.slice(0, 10)})\n${(a.summary || a.body).slice(0, 600)}`).join("\n\n");
+          if (!data?.length)
+            data = (
+              await sb
+                .from("articles")
+                .select("id,title,summary,body,created_at")
+                .order("created_at", { ascending: false })
+                .limit(12)
+            ).data;
+          const ctx = (data ?? [])
+            .map(
+              (a) =>
+                `[${a.id}] ${a.title} (${a.created_at.slice(0, 10)})\n${(a.summary || a.body).slice(0, 600)}`,
+            )
+            .join("\n\n");
           system = `You answer questions about the Dooars region ONLY using the published Dooars Khabar stories below. If the stories do not contain the answer, say you could not find it in published stories. After each fact, cite the story as [story:ID] using its exact ID. Be brief. Reply in the user's language.\n\nSTORIES:\n${ctx}`;
         }
         try {
@@ -108,7 +152,9 @@ export const Route = createFileRoute("/api/public/ai")({
             model: openai.responses("openai/gpt-6-astra"),
             system,
             messages: history,
-            providerOptions: { openai: { forceReasoning: true, reasoningEffort: "low", store: false } },
+            providerOptions: {
+              openai: { forceReasoning: true, reasoningEffort: "low", store: false },
+            },
             abortSignal: request.signal,
           });
           return result.toTextStreamResponse();

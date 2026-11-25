@@ -26,13 +26,28 @@ const D = {
     "समाचार लोड भएन। आफ्नो जडान जाँचेर फेरि प्रयास गर्नुहोस्।",
   ],
   retry: ["Try again", "আবার চেষ্টা করুন", "फिर कोशिश करें", "फेरि प्रयास गर्नुहोस्"],
-  caughtUp: ["You're all caught up", "আপনি সব খবর দেখে ফেলেছেন", "आपने सारी ख़बरें देख लीं", "तपाईंले सबै समाचार हेर्नुभयो"],
+  caughtUp: [
+    "You're all caught up",
+    "আপনি সব খবর দেখে ফেলেছেন",
+    "आपने सारी ख़बरें देख लीं",
+    "तपाईंले सबै समाचार हेर्नुभयो",
+  ],
   allCats: ["← All categories", "← সব বিভাগ", "← सभी श्रेणियाँ", "← सबै वर्गहरू"],
   loadMore: ["Load more", "আরও দেখুন", "और देखें", "थप हेर्नुहोस्"],
   signIn: ["Sign in", "সাইন ইন", "साइन इन", "साइन इन"],
   uploadNews: ["Upload News", "খবর আপলোড", "ख़बर अपलोड करें", "समाचार अपलोड"],
-  signInUpload: ["Sign in to publish your own news story.", "নিজের খবর প্রকাশ করতে সাইন ইন করুন।", "अपनी ख़बर प्रकाशित करने के लिए साइन इन करें।", "आफ्नो समाचार प्रकाशित गर्न साइन इन गर्नुहोस्।"],
-  signInProfile: ["Sign in to see your profile.", "প্রোফাইল দেখতে সাইন ইন করুন।", "प्रोफ़ाइल देखने के लिए साइन इन करें।", "प्रोफाइल हेर्न साइन इन गर्नुहोस्।"],
+  signInUpload: [
+    "Sign in to publish your own news story.",
+    "নিজের খবর প্রকাশ করতে সাইন ইন করুন।",
+    "अपनी ख़बर प्रकाशित करने के लिए साइन इन करें।",
+    "आफ्नो समाचार प्रकाशित गर्न साइन इन गर्नुहोस्।",
+  ],
+  signInProfile: [
+    "Sign in to see your profile.",
+    "প্রোফাইল দেখতে সাইন ইন করুন।",
+    "प्रोफ़ाइल देखने के लिए साइन इन करें।",
+    "प्रोफाइल हेर्न साइन इन गर्नुहोस्।",
+  ],
   headline: ["Headline", "শিরোনাম", "शीर्षक", "शीर्षक"],
   whatHappened: ["What happened?", "কী ঘটেছে?", "क्या हुआ?", "के भयो?"],
   category: ["Category", "বিভাগ", "श्रेणी", "वर्ग"],
@@ -54,10 +69,20 @@ const D = {
     "पहिले कम्तीमा ५ अक्षरको शीर्षक लेख्नुहोस्।",
   ],
   fullStory: ["Full story", "পুরো খবর", "पूरी ख़बर", "पूरा समाचार"],
-  storyPh: ["Tell the full story. Who, what, where, when…", "পুরো ঘটনা লিখুন। কে, কী, কোথায়, কখন…", "पूरी कहानी लिखें। कौन, क्या, कहाँ, कब…", "पूरा कुरा लेख्नुहोस्। को, के, कहाँ, कहिले…"],
+  storyPh: [
+    "Tell the full story. Who, what, where, when…",
+    "পুরো ঘটনা লিখুন। কে, কী, কোথায়, কখন…",
+    "पूरी कहानी लिखें। कौन, क्या, कहाँ, कब…",
+    "पूरा कुरा लेख्नुहोस्। को, के, कहाँ, कहिले…",
+  ],
   publish: ["Publish News", "খবর প্রকাশ করুন", "ख़बर प्रकाशित करें", "समाचार प्रकाशित गर्नुहोस्"],
   publishing: ["Publishing…", "প্রকাশ হচ্ছে…", "प्रकाशित हो रही है…", "प्रकाशित हुँदैछ…"],
-  liveNote: ["Your story goes live immediately. Please share only true, respectful news.", "আপনার খবর সঙ্গে সঙ্গে প্রকাশিত হবে। শুধু সত্য ও সম্মানজনক খবর দিন।", "आपकी ख़बर तुरंत प्रकाशित होगी। कृपया केवल सच्ची और सम्मानजनक ख़बर ही साझा करें।", "तपाईंको समाचार तुरुन्तै प्रकाशित हुन्छ। कृपया सत्य र सम्मानजनक समाचार मात्र दिनुहोस्।"],
+  liveNote: [
+    "Your story goes live immediately. Please share only true, respectful news.",
+    "আপনার খবর সঙ্গে সঙ্গে প্রকাশিত হবে। শুধু সত্য ও সম্মানজনক খবর দিন।",
+    "आपकी ख़बर तुरंत प्रकाशित होगी। कृपया केवल सच्ची और सम्मानजनक ख़बर ही साझा करें।",
+    "तपाईंको समाचार तुरुन्तै प्रकाशित हुन्छ। कृपया सत्य र सम्मानजनक समाचार मात्र दिनुहोस्।",
+  ],
   goLive: ["Go Live", "লাইভে যান", "लाइव जाएँ", "लाइभ जानुहोस्"],
   watchLive: ["Watch live", "লাইভ দেখুন", "लाइव देखें", "लाइभ हेर्नुहोस्"],
   startBroadcast: ["Start broadcast", "সম্প্রচার শুরু করুন", "प्रसारण शुरू करें", "प्रसारण सुरु गर्नुहोस्"],
@@ -149,7 +174,12 @@ const D = {
   ],
   myNews: ["My News", "আমার খবর", "मेरी ख़बरें", "मेरा समाचार"],
   published: ["stories published", "টি খবর প্রকাশিত", "ख़बरें प्रकाशित", "समाचार प्रकाशित"],
-  noPosts: ["You haven't published any news yet.", "আপনি এখনও কোনো খবর প্রকাশ করেননি।", "आपने अभी तक कोई ख़बर प्रकाशित नहीं की।", "तपाईंले अहिलेसम्म कुनै समाचार प्रकाशित गर्नुभएको छैन।"],
+  noPosts: [
+    "You haven't published any news yet.",
+    "আপনি এখনও কোনো খবর প্রকাশ করেননি।",
+    "आपने अभी तक कोई ख़बर प्रकाशित नहीं की।",
+    "तपाईंले अहिलेसम्म कुनै समाचार प्रकाशित गर्नुभएको छैन।",
+  ],
   All: ["All", "সব", "सभी", "सबै"],
   Local: ["Local", "স্থানীয়", "स्थानीय", "स्थानीय"],
   "West Bengal": ["West Bengal", "পশ্চিমবঙ্গ", "पश्चिम बंगाल", "पश्चिम बंगाल"],
@@ -178,8 +208,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     const s = localStorage.getItem(KEY) as Lang | null;
     if (s && s in IDX) setLangState(s);
   }, []);
-  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  const setLang = useCallback((l: Lang) => { localStorage.setItem(KEY, l); setLangState(l); }, []);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+  const setLang = useCallback((l: Lang) => {
+    localStorage.setItem(KEY, l);
+    setLangState(l);
+  }, []);
   const t = useCallback((k: string) => translate(lang, k), [lang]);
   return <LangCtx.Provider value={{ lang, setLang, t }}>{children}</LangCtx.Provider>;
 }

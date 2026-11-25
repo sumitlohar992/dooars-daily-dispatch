@@ -11,21 +11,32 @@ export const Route = createFileRoute("/api/public/live-token")({
         const apiSecret = process.env["LIVEKIT_API_SECRET"];
         if (!url || !apiKey || !apiSecret) {
           return Response.json(
-            { error: "Live streaming is not configured. Add LIVEKIT_URL, LIVEKIT_API_KEY, and LIVEKIT_API_SECRET." },
+            {
+              error:
+                "Live streaming is not configured. Add LIVEKIT_URL, LIVEKIT_API_KEY, and LIVEKIT_API_SECRET.",
+            },
             { status: 503 },
           );
         }
 
-        const body = await request.json().catch(() => ({})) as { role?: "publisher" | "viewer"; roomName?: string };
+        const body = (await request.json().catch(() => ({}))) as {
+          role?: "publisher" | "viewer";
+          roomName?: string;
+        };
         const role = body.role === "publisher" ? "publisher" : "viewer";
-        const roomName = (body.roomName || "dooars-live").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 64) || "dooars-live";
+        const roomName =
+          (body.roomName || "dooars-live").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 64) ||
+          "dooars-live";
 
         let identity = `viewer-${crypto.randomUUID()}`;
         let name = "Viewer";
         if (role === "publisher") {
           const auth = request.headers.get("authorization");
           if (!auth?.startsWith("Bearer ")) {
-            return Response.json({ error: "Sign in before starting a live broadcast." }, { status: 401 });
+            return Response.json(
+              { error: "Sign in before starting a live broadcast." },
+              { status: 401 },
+            );
           }
 
           const supabaseUrl = process.env["SUPABASE_URL"];

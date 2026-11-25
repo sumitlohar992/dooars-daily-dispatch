@@ -22,13 +22,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   const uid = user?.id;
   useEffect(() => {
-    if (!uid) { setIsAdmin(false); return; }
+    if (!uid) {
+      setIsAdmin(false);
+      return;
+    }
     // Records activity for the owner dashboard and checks the owner role.
-    supabase.from("user_details").upsert({ user_id: uid, last_seen_at: new Date().toISOString() }, { onConflict: "user_id" }).then(() => {});
-    supabase.rpc("has_role", { _user_id: uid, _role: "admin" }).then(({ data }) => setIsAdmin(!!data));
+    supabase
+      .from("user_details")
+      .upsert({ user_id: uid, last_seen_at: new Date().toISOString() }, { onConflict: "user_id" })
+      .then(() => {});
+    supabase
+      .rpc("has_role", { _user_id: uid, _role: "admin" })
+      .then(({ data }) => setIsAdmin(!!data));
   }, [uid]);
   const m = user?.user_metadata ?? {};
-  const displayName = (m["full_name"] || m["name"] || user?.email?.split("@")[0] || "Reader") as string;
+  const displayName = (m["full_name"] ||
+    m["name"] ||
+    user?.email?.split("@")[0] ||
+    "Reader") as string;
   return <Ctx.Provider value={{ user, loading, displayName, isAdmin }}>{children}</Ctx.Provider>;
 }
 

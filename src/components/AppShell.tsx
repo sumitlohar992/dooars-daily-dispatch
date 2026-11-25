@@ -27,7 +27,11 @@ export function Header({ title, back }: { title?: string; back?: ReactNode }) {
           </Link>
         )}
         <LanguagePicker />
-        <Link to="/search" aria-label="Search" className="rounded-full p-2 hover:bg-primary-foreground/10">
+        <Link
+          to="/search"
+          aria-label="Search"
+          className="rounded-full p-2 hover:bg-primary-foreground/10"
+        >
           <Search className="h-5 w-5" />
         </Link>
       </div>
@@ -40,7 +44,11 @@ function LanguagePicker() {
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} aria-label={t("language")} className="flex items-center gap-1 rounded-full p-2 text-sm font-semibold hover:bg-primary-foreground/10">
+      <button
+        onClick={() => setOpen(!open)}
+        aria-label={t("language")}
+        className="flex items-center gap-1 rounded-full p-2 text-sm font-semibold hover:bg-primary-foreground/10"
+      >
         <Languages className="h-5 w-5" />
         <span className="uppercase">{lang}</span>
       </button>
@@ -50,8 +58,13 @@ function LanguagePicker() {
           <ul className="absolute right-0 z-50 mt-2 w-40 overflow-hidden rounded-xl border bg-card text-card-foreground shadow-card">
             {LANGS.map((l) => (
               <li key={l.code}>
-                <button onClick={() => { setLang(l.code); setOpen(false); }}
-                  className={`block w-full px-4 py-3 text-left font-semibold ${lang === l.code ? "bg-sky-soft text-primary" : "hover:bg-muted"}`}>
+                <button
+                  onClick={() => {
+                    setLang(l.code);
+                    setOpen(false);
+                  }}
+                  className={`block w-full px-4 py-3 text-left font-semibold ${lang === l.code ? "bg-sky-soft text-primary" : "hover:bg-muted"}`}
+                >
                   {l.label}
                 </button>
               </li>
@@ -100,16 +113,9 @@ export function BottomNav() {
 }
 
 export function Page({ children }: { children: ReactNode }) {
-  return <main className="mx-auto max-w-xl md:max-w-3xl lg:max-w-5xl pb-24 animate-rise">{children}</main>;
-}
-
-export function PageWatermark() {
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-x-0 bottom-16 top-14 z-0 flex items-center justify-center overflow-hidden"
-    >
-      <img src="/logo.png" alt="" className="h-64 w-64 object-contain opacity-[0.08] sm:h-80 sm:w-80" />
-    </div>
+    <main className="mx-auto max-w-xl md:max-w-3xl lg:max-w-5xl pb-24 animate-rise">
+      {children}
+    </main>
   );
 }

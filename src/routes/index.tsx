@@ -3,7 +3,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/lib/news";
-import { Header, Page, PageWatermark } from "@/components/AppShell";
+import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
@@ -11,7 +11,8 @@ import { Radio, MapPin, Bot } from "lucide-react";
 function SlideBar() {
   const { data } = useQuery({
     queryKey: ["slides"],
-    queryFn: async () => (await supabase.from("slides").select("*").order("sort").order("created_at")).data ?? [],
+    queryFn: async () =>
+      (await supabase.from("slides").select("*").order("sort").order("created_at")).data ?? [],
   });
   const [i, setI] = useState(0);
   useEffect(() => {
@@ -21,10 +22,20 @@ function SlideBar() {
   }, [data]);
   const s = data?.[i % (data?.length || 1)];
   if (!s) return null;
-  const inner = <p key={s.id} className="animate-rise truncate text-center text-sm font-bold">{s.title}</p>;
+  const inner = (
+    <p key={s.id} className="animate-rise truncate text-center text-sm font-bold">
+      {s.title}
+    </p>
+  );
   return (
     <div className="bg-sky px-4 py-2 text-secondary-foreground">
-      {s.link ? <a href={s.link} target="_blank" rel="noreferrer">{inner}</a> : inner}
+      {s.link ? (
+        <a href={s.link} target="_blank" rel="noreferrer">
+          {inner}
+        </a>
+      ) : (
+        inner
+      )}
     </div>
   );
 }
@@ -32,9 +43,29 @@ function SlideBar() {
 function QuickActions() {
   return (
     <div className="grid grid-cols-3 gap-2 px-4 pt-3">
-      <Link to="/live" className="flex items-center justify-center gap-1.5 rounded-full bg-breaking py-2 text-sm font-bold text-breaking-foreground"><Radio className="h-4 w-4" />Go Live</Link>
-      <Link to="/assistant" search={{ mode: "ask" }} className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"><MapPin className="h-4 w-4" />Ask Dooars</Link>
-      <Link to="/assistant" search={{ mode: "help" }} className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"><Bot className="h-4 w-4" />Help</Link>
+      <Link
+        to="/live"
+        className="flex items-center justify-center gap-1.5 rounded-full bg-breaking py-2 text-sm font-bold text-breaking-foreground"
+      >
+        <Radio className="h-4 w-4" />
+        Go Live
+      </Link>
+      <Link
+        to="/assistant"
+        search={{ mode: "ask" }}
+        className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"
+      >
+        <MapPin className="h-4 w-4" />
+        Ask Dooars
+      </Link>
+      <Link
+        to="/assistant"
+        search={{ mode: "help" }}
+        className="flex items-center justify-center gap-1.5 rounded-full bg-sky-soft py-2 text-sm font-bold text-primary"
+      >
+        <Bot className="h-4 w-4" />
+        Help
+      </Link>
     </div>
   );
 }
@@ -43,9 +74,16 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Dooars Khabar — Breaking news from the Dooars, Bengal & India" },
-      { name: "description", content: "Latest local, West Bengal, national, politics, sports and entertainment news from Dooars Khabar." },
+      {
+        name: "description",
+        content:
+          "Latest local, West Bengal, national, politics, sports and entertainment news from Dooars Khabar.",
+      },
       { property: "og:title", content: "Dooars Khabar — Breaking news" },
-      { property: "og:description", content: "Latest local, West Bengal and national news from Dooars Khabar." },
+      {
+        property: "og:description",
+        content: "Latest local, West Bengal and national news from Dooars Khabar.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -59,7 +97,12 @@ function Ticker() {
   const { data } = useQuery({
     queryKey: ["breaking"],
     queryFn: async () => {
-      const { data } = await supabase.from("articles").select("id,title").eq("is_breaking", true).order("created_at", { ascending: false }).limit(6);
+      const { data } = await supabase
+        .from("articles")
+        .select("id,title")
+        .eq("is_breaking", true)
+        .order("created_at", { ascending: false })
+        .limit(6);
       return data ?? [];
     },
   });
@@ -107,16 +150,13 @@ function Featured({ items }: { items: Article[] }) {
         className="no-scrollbar flex snap-x snap-mandatory overflow-x-auto"
       >
         {items.map((a) => (
-          <Link key={a.id} to="/article/$id" params={{ id: a.id }} className="relative aspect-[4/3] w-full shrink-0 snap-start bg-muted sm:aspect-[16/9]">
+          <Link
+            key={a.id}
+            to="/article/$id"
+            params={{ id: a.id }}
+            className="relative aspect-[4/3] w-full shrink-0 snap-start bg-muted sm:aspect-[16/9]"
+          >
             {a.image_url && <img src={a.image_url} alt="" className="h-full w-full object-cover" />}
-            {a.image_url && (
-              <img
-                src="/logo.png"
-                alt=""
-                aria-hidden="true"
-                className="pointer-events-none absolute left-3 top-3 z-10 h-10 w-10 object-contain opacity-40"
-              />
-            )}
             <div className="absolute inset-0 bg-fade" />
             {a.image_is_ai && (
               <span className="absolute right-3 top-3 rounded bg-foreground/80 px-2 py-1 text-[10px] font-semibold text-background">
@@ -124,16 +164,23 @@ function Featured({ items }: { items: Article[] }) {
               </span>
             )}
             <div className="absolute inset-x-0 bottom-0 p-4 pb-7 text-primary-foreground">
-              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">{t(a.category)}</span>
+              <span className="rounded bg-sky px-2 py-0.5 text-[11px] font-bold uppercase text-secondary-foreground">
+                {t(a.category)}
+              </span>
               <h2 className="mt-2 line-clamp-2 text-xl font-extrabold leading-tight">{a.title}</h2>
-              <p className="mt-1 text-xs opacity-80">{a.author_name} · {timeAgo(a.created_at)}</p>
+              <p className="mt-1 text-xs opacity-80">
+                {a.author_name} · {timeAgo(a.created_at)}
+              </p>
             </div>
           </Link>
         ))}
       </div>
       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
         {items.map((_, k) => (
-          <span key={k} className={`h-1.5 rounded-full transition-all ${k === i ? "w-5 bg-sky" : "w-1.5 bg-primary-foreground/60"}`} />
+          <span
+            key={k}
+            className={`h-1.5 rounded-full transition-all ${k === i ? "w-5 bg-sky" : "w-1.5 bg-primary-foreground/60"}`}
+          />
         ))}
       </div>
     </div>
@@ -157,17 +204,19 @@ function Home() {
   useEffect(() => {
     const el = sentinel.current;
     if (!el) return;
-    const ob = new IntersectionObserver((e) => {
-      if (e[0]?.isIntersecting && q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage();
-    }, { rootMargin: "300px" });
+    const ob = new IntersectionObserver(
+      (e) => {
+        if (e[0]?.isIntersecting && q.hasNextPage && !q.isFetchingNextPage) q.fetchNextPage();
+      },
+      { rootMargin: "300px" },
+    );
     ob.observe(el);
     return () => ob.disconnect();
   }, [q]);
 
   return (
     <div className="relative isolate min-h-screen">
-      <PageWatermark />
-      <div className="relative z-10">
+      <div>
         <Header />
         <SlideBar />
         <Ticker />
@@ -208,9 +257,13 @@ function Home() {
               )}
               <Featured items={featured} />
               {tab === "All" && rest.length > 0 && (
-                <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">{tr("latest")}</h2>
+                <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">
+                  {tr("latest")}
+                </h2>
               )}
-              {rest.map((a) => <ArticleCard key={a.id} a={a} watermark />)}
+              {rest.map((a) => (
+                <ArticleCard key={a.id} a={a} />
+              ))}
               {!all.length && !q.isError && (
                 <p className="p-10 text-center text-muted-foreground">{tr("noNews")}</p>
               )}

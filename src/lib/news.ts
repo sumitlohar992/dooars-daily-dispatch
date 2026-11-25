@@ -28,7 +28,12 @@ export function timeAgo(iso: string) {
   return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
-export async function fetchArticles(opts: { category?: string; page: number; search?: string; authorId?: string }) {
+export async function fetchArticles(opts: {
+  category?: string;
+  page: number;
+  search?: string;
+  authorId?: string;
+}) {
   let q = supabase.from("articles").select("*").order("created_at", { ascending: false });
   if (opts.category && opts.category !== "All") q = q.eq("category", opts.category);
   if (opts.authorId) q = q.eq("author_id", opts.authorId);
@@ -42,13 +47,20 @@ export async function fetchArticles(opts: { category?: string; page: number; sea
 export async function shareArticle(a: { id: string; title: string }) {
   const url = `${window.location.origin}/article/${a.id}`;
   if (navigator.share) {
-    try { await navigator.share({ title: a.title, url }); return true; } catch { return true; }
+    try {
+      await navigator.share({ title: a.title, url });
+      return true;
+    } catch {
+      return true;
+    }
   }
   return false;
 }
 
 export function shareLinks(a: { id: string; title: string }) {
-  const url = encodeURIComponent(`${typeof window !== "undefined" ? window.location.origin : ""}/article/${a.id}`);
+  const url = encodeURIComponent(
+    `${typeof window !== "undefined" ? window.location.origin : ""}/article/${a.id}`,
+  );
   const t = encodeURIComponent(a.title);
   return {
     whatsapp: `https://wa.me/?text=${t}%20${url}`,

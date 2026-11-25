@@ -19,15 +19,21 @@ export const Route = createFileRoute("/upload")({
       { property: "og:description", content: "Be a citizen reporter on Dooars Khabar." },
     ],
   }),
-  validateSearch: (s: Record<string, unknown>) => ({ edit: typeof s["edit"] === "string" ? s["edit"] : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    edit: typeof s["edit"] === "string" ? s["edit"] : undefined,
+  }),
   component: UploadPage,
 });
 
 async function uploadFile(userId: string, file: File) {
   const path = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-  const { error } = await supabase.storage.from("media").upload(path, file, { contentType: file.type });
+  const { error } = await supabase.storage
+    .from("media")
+    .upload(path, file, { contentType: file.type });
   if (error) throw error;
-  const { data, error: e2 } = await supabase.storage.from("media").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+  const { data, error: e2 } = await supabase.storage
+    .from("media")
+    .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
   if (e2 || !data) throw e2;
   return data.signedUrl;
 }
@@ -37,15 +43,28 @@ function videoThumbnail(file: File): Promise<File | null> {
   return new Promise((resolve) => {
     const v = document.createElement("video");
     const url = URL.createObjectURL(file);
-    const done = (f: File | null) => { URL.revokeObjectURL(url); resolve(f); };
-    v.muted = true; v.playsInline = true; v.preload = "auto"; v.src = url;
-    v.onloadeddata = () => { v.currentTime = Math.min(1, (v.duration || 2) / 2); };
+    const done = (f: File | null) => {
+      URL.revokeObjectURL(url);
+      resolve(f);
+    };
+    v.muted = true;
+    v.playsInline = true;
+    v.preload = "auto";
+    v.src = url;
+    v.onloadeddata = () => {
+      v.currentTime = Math.min(1, (v.duration || 2) / 2);
+    };
     v.onseeked = () => {
       const c = document.createElement("canvas");
       const scale = Math.min(1, 1280 / (v.videoWidth || 1280));
-      c.width = (v.videoWidth || 1280) * scale; c.height = (v.videoHeight || 720) * scale;
+      c.width = (v.videoWidth || 1280) * scale;
+      c.height = (v.videoHeight || 720) * scale;
       c.getContext("2d")?.drawImage(v, 0, 0, c.width, c.height);
-      c.toBlob((b) => done(b ? new File([b], "thumbnail.jpg", { type: "image/jpeg" }) : null), "image/jpeg", 0.85);
+      c.toBlob(
+        (b) => done(b ? new File([b], "thumbnail.jpg", { type: "image/jpeg" }) : null),
+        "image/jpeg",
+        0.85,
+      );
     };
     v.onerror = () => done(null);
     setTimeout(() => done(null), 15000);
@@ -73,20 +92,46 @@ function UploadPage() {
     video_url: string | null;
   } | null>(null);
   useEffect(() => {
-    if (!edit) { setExisting(null); return; }
-    supabase.from("articles").select("*").eq("id", edit).maybeSingle().then(({ data }) => {
-      if (!data) return;
-      setTitle(data.title); setCategory(data.category); setBody(data.body);
-      setExisting({
-        image_url: data.image_url,
-        image_is_ai: data.image_is_ai,
-        video_url: data.video_url,
+    if (!edit) {
+      setExisting(null);
+      return;
+    }
+    supabase
+      .from("articles")
+      .select("*")
+      .eq("id", edit)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!data) return;
+        setTitle(data.title);
+        setCategory(data.category);
+        setBody(data.body);
+        setExisting({
+          image_url: data.image_url,
+          image_is_ai: data.image_is_ai,
+          video_url: data.video_url,
+        });
       });
-    });
   }, [edit]);
 
-  if (loading) return <><Header title={t("uploadNews")} /><Page><div /></Page></>;
-  if (!user) return <><Header title={t("uploadNews")} /><Page><SignInPrompt message={t("signInUpload")} /></Page></>;
+  if (loading)
+    return (
+      <>
+        <Header title={t("uploadNews")} />
+        <Page>
+          <div />
+        </Page>
+      </>
+    );
+  if (!user)
+    return (
+      <>
+        <Header title={t("uploadNews")} />
+        <Page>
+          <SignInPrompt message={t("signInUpload")} />
+        </Page>
+      </>
+    );
 
   const generateAiImage = async () => {
     if (title.trim().length < 5) {
@@ -108,7 +153,7 @@ function UploadPage() {
         body: JSON.stringify({ mode: "image", title: title.trim(), category }),
       });
       if (!response.ok) {
-        const result = await response.json().catch(() => null) as { error?: unknown } | null;
+        const result = (await response.json().catch(() => null)) as { error?: unknown } | null;
         throw new Error(
           typeof result?.error === "string" ? result.error : "Image generation failed.",
         );
@@ -139,19 +184,41 @@ function UploadPage() {
 
   const submit = async (ev: React.FormEvent) => {
     ev.preventDefault();
-    if (title.trim().length < 5) { toast.error("Please write a headline (at least 5 letters)"); return; }
-    if (body.trim().length < 20) { toast.error("Please write a little more about the story"); return; }
+    if (title.trim().length < 5) {
+      toast.error("Please write a headline (at least 5 letters)");
+      return;
+    }
+    if (body.trim().length < 20) {
+      toast.error("Please write a little more about the story");
+      return;
+    }
     setBusy(true);
     try {
       const thumb = !image && video ? await videoThumbnail(video) : null;
-      const image_url = image ? await uploadFile(user.id, image) : thumb ? await uploadFile(user.id, thumb) : existing?.image_url ?? null;
-      const image_is_ai = image ? imageIsAi : thumb ? false : existing?.image_is_ai ?? false;
-      const video_url = video ? await uploadFile(user.id, video) : existing?.video_url ?? null;
+      const image_url = image
+        ? await uploadFile(user.id, image)
+        : thumb
+          ? await uploadFile(user.id, thumb)
+          : (existing?.image_url ?? null);
+      const image_is_ai = image ? imageIsAi : thumb ? false : (existing?.image_is_ai ?? false);
+      const video_url = video ? await uploadFile(user.id, video) : (existing?.video_url ?? null);
       const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
-      const fields = { title: title.trim(), category, body, summary, image_url, image_is_ai, video_url };
+      const fields = {
+        title: title.trim(),
+        category,
+        body,
+        summary,
+        image_url,
+        image_is_ai,
+        video_url,
+      };
       const { data, error } = edit
         ? await supabase.from("articles").update(fields).eq("id", edit).select("id").single()
-        : await supabase.from("articles").insert({ ...fields, author_id: user.id, author_name: displayName }).select("id").single();
+        : await supabase
+            .from("articles")
+            .insert({ ...fields, author_id: user.id, author_name: displayName })
+            .select("id")
+            .single();
       if (error) throw error;
       qc.invalidateQueries({ queryKey: ["article", data.id] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
@@ -176,15 +243,25 @@ function UploadPage() {
         <form onSubmit={submit} className="space-y-5 p-4">
           <div>
             <label className={label}>{t("headline")}</label>
-            <input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={150} placeholder={t("whatHappened")} className={`${field} h-12 text-lg font-semibold`} />
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              maxLength={150}
+              placeholder={t("whatHappened")}
+              className={`${field} h-12 text-lg font-semibold`}
+            />
           </div>
 
           <div>
             <label className={label}>{t("category")}</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
-                <button type="button" key={c} onClick={() => setCategory(c)}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold ${category === c ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"}`}>
+                <button
+                  type="button"
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold ${category === c ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"}`}
+                >
                   {t(c)}
                 </button>
               ))}
@@ -218,24 +295,53 @@ function UploadPage() {
               </button>
               <p className="text-xs text-muted-foreground">{t("aiImageHelp")}</p>
             </div>
-            <MediaPicker icon={<Video className="h-6 w-6" />} label={t("addVideo")} accept="video/*" file={video} onChange={setVideo} />
+            <MediaPicker
+              icon={<Video className="h-6 w-6" />}
+              label={t("addVideo")}
+              accept="video/*"
+              file={video}
+              onChange={setVideo}
+            />
           </div>
 
           <div>
             <label className={label}>{t("fullStory")}</label>
             <div className="overflow-hidden rounded-xl border bg-card focus-within:ring-2 focus-within:ring-ring">
               <div className="flex gap-1 border-b bg-muted/50 p-1.5">
-                <ToolBtn onClick={() => wrap("**")} label="Bold"><Bold className="h-4 w-4" /></ToolBtn>
-                <ToolBtn onClick={() => wrap("*")} label="Italic"><Italic className="h-4 w-4" /></ToolBtn>
-                <ToolBtn onClick={() => wrap("\n\n## ", "\n\n")} label="Heading"><Heading2 className="h-4 w-4" /></ToolBtn>
+                <ToolBtn onClick={() => wrap("**")} label="Bold">
+                  <Bold className="h-4 w-4" />
+                </ToolBtn>
+                <ToolBtn onClick={() => wrap("*")} label="Italic">
+                  <Italic className="h-4 w-4" />
+                </ToolBtn>
+                <ToolBtn onClick={() => wrap("\n\n## ", "\n\n")} label="Heading">
+                  <Heading2 className="h-4 w-4" />
+                </ToolBtn>
               </div>
-              <textarea ref={bodyRef} value={body} onChange={(e) => setBody(e.target.value)} rows={10}
-                placeholder={t("storyPh")} className="w-full resize-y bg-transparent p-4 outline-none" />
+              <textarea
+                ref={bodyRef}
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                rows={10}
+                placeholder={t("storyPh")}
+                className="w-full resize-y bg-transparent p-4 outline-none"
+              />
             </div>
           </div>
 
-          <button disabled={busy} className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-lg font-bold text-primary-foreground shadow-card disabled:opacity-60">
-            {busy ? <><Loader2 className="h-5 w-5 animate-spin" /> {t("publishing")}</> : edit ? "Save changes" : t("publish")}
+          <button
+            disabled={busy}
+            className="flex h-14 w-full items-center justify-center gap-2 rounded-full bg-primary text-lg font-bold text-primary-foreground shadow-card disabled:opacity-60"
+          >
+            {busy ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" /> {t("publishing")}
+              </>
+            ) : edit ? (
+              "Save changes"
+            ) : (
+              t("publish")
+            )}
           </button>
           <p className="text-center text-xs text-muted-foreground">{t("liveNote")}</p>
         </form>
@@ -244,27 +350,76 @@ function UploadPage() {
   );
 }
 
-function ToolBtn({ children, onClick, label }: { children: React.ReactNode; onClick: () => void; label: string }) {
-  return <button type="button" aria-label={label} onClick={onClick} className="rounded-md p-2 hover:bg-card">{children}</button>;
+function ToolBtn({
+  children,
+  onClick,
+  label,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onClick={onClick}
+      className="rounded-md p-2 hover:bg-card"
+    >
+      {children}
+    </button>
+  );
 }
 
-function MediaPicker({ icon, label, accept, file, onChange }: { icon: React.ReactNode; label: string; accept: string; file: File | null; onChange: (f: File | null) => void }) {
+function MediaPicker({
+  icon,
+  label,
+  accept,
+  file,
+  onChange,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  accept: string;
+  file: File | null;
+  onChange: (f: File | null) => void;
+}) {
   const url = file ? URL.createObjectURL(file) : null;
   return (
     <div className="relative aspect-square overflow-hidden rounded-xl border-2 border-dashed border-sky bg-sky-soft">
       {url ? (
         <>
-          {file!.type.startsWith("image") ? <img src={url} alt="" className="h-full w-full object-cover" /> : <video src={url} className="h-full w-full object-cover" muted />}
-          <button type="button" onClick={() => onChange(null)} aria-label="Remove" className="absolute right-1.5 top-1.5 rounded-full bg-card p-1 shadow-card"><X className="h-4 w-4" /></button>
+          {file!.type.startsWith("image") ? (
+            <img src={url} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <video src={url} className="h-full w-full object-cover" muted />
+          )}
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            aria-label="Remove"
+            className="absolute right-1.5 top-1.5 rounded-full bg-card p-1 shadow-card"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </>
       ) : (
         <label className="flex h-full cursor-pointer flex-col items-center justify-center gap-2 text-sm font-semibold text-primary">
-          {icon}{label}
-          <input type="file" accept={accept} className="hidden" onChange={(e) => {
-            const f = e.target.files?.[0] ?? null;
-            if (f && f.size > 50 * 1024 * 1024) { toast.error("File is too large (max 50MB)"); return; }
-            onChange(f);
-          }} />
+          {icon}
+          {label}
+          <input
+            type="file"
+            accept={accept}
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0] ?? null;
+              if (f && f.size > 50 * 1024 * 1024) {
+                toast.error("File is too large (max 50MB)");
+                return;
+              }
+              onChange(f);
+            }}
+          />
         </label>
       )}
     </div>

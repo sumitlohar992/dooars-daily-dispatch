@@ -47,9 +47,17 @@ function SearchPage() {
           </label>
         </div>
         {q.isFetching && <CardSkeleton />}
-        {q.data?.map((a) => <ArticleCard key={a.id} a={a} />)}
-        {q.data && !q.data.length && <p className="p-10 text-center text-muted-foreground">No results for “{term}”.</p>}
-        {term.length < 2 && <p className="px-4 text-center text-sm text-muted-foreground">Type at least 2 letters to search.</p>}
+        {q.data?.map((a) => (
+          <ArticleCard key={a.id} a={a} />
+        ))}
+        {q.data && !q.data.length && (
+          <p className="p-10 text-center text-muted-foreground">No results for “{term}”.</p>
+        )}
+        {term.length < 2 && (
+          <p className="px-4 text-center text-sm text-muted-foreground">
+            Type at least 2 letters to search.
+          </p>
+        )}
       </Page>
     </>
   );

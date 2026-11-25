@@ -1,4 +1,5 @@
 # Requested updates
+
 - [ ] Connect real live broadcasting and add camera switch, microphone controls, end broadcast and viewer experience (needs streaming service).
 - [ ] Fix screen fitting across mobile, tablet, desktop and orientation changes.
 - [ ] Add owner-only permanent user removal with confirmation and reason.

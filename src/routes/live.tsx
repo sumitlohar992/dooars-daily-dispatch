@@ -200,9 +200,7 @@ function LivePage() {
       room.on(RoomEvent.LocalTrackUnpublished, (publication) => {
         if (publication.source === Track.Source.ScreenShare) {
           setSharingScreen(false);
-          const cameraTrack = room.localParticipant.getTrackPublication(
-            Track.Source.Camera,
-          )?.track;
+          const cameraTrack = room.localParticipant.getTrackPublication(Track.Source.Camera)?.track;
           if (cameraTrack) {
             const { width, height } = cameraTrack.mediaStreamTrack.getSettings();
             updateStageAspectRatio(width, height);

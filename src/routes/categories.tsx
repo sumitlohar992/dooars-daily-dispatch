@@ -1,7 +1,16 @@
 import { useT } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { MapPin, Map, Flag, Landmark, Trophy, Clapperboard, Briefcase, HeartPulse } from "lucide-react";
+import {
+  MapPin,
+  Map,
+  Flag,
+  Landmark,
+  Trophy,
+  Clapperboard,
+  Briefcase,
+  HeartPulse,
+} from "lucide-react";
 import { z } from "zod";
 import { CATEGORIES, PAGE_SIZE, fetchArticles } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
@@ -14,7 +23,11 @@ export const Route = createFileRoute("/categories")({
   head: () => ({
     meta: [
       { title: "Categories — Dooars Khabar" },
-      { name: "description", content: "Browse news by category: Local, West Bengal, National, Politics, Sports and more." },
+      {
+        name: "description",
+        content:
+          "Browse news by category: Local, West Bengal, National, Politics, Sports and more.",
+      },
       { property: "og:title", content: "News categories — Dooars Khabar" },
       { property: "og:description", content: "Browse news by category on Dooars Khabar." },
     ],
@@ -68,12 +81,21 @@ function CategoryFeed({ category }: { category: string }) {
   const { t } = useT();
   return (
     <>
-      <Link to="/categories" className="block px-4 py-3 text-sm font-semibold text-sky">{t("allCats")}</Link>
+      <Link to="/categories" className="block px-4 py-3 text-sm font-semibold text-sky">
+        {t("allCats")}
+      </Link>
       {q.isLoading && <CardSkeleton />}
-      {all.map((a) => <ArticleCard key={a.id} a={a} />)}
-      {!q.isLoading && !all.length && <p className="p-10 text-center text-muted-foreground">{t("noNews")}</p>}
+      {all.map((a) => (
+        <ArticleCard key={a.id} a={a} />
+      ))}
+      {!q.isLoading && !all.length && (
+        <p className="p-10 text-center text-muted-foreground">{t("noNews")}</p>
+      )}
       {q.hasNextPage && (
-        <button onClick={() => q.fetchNextPage()} className="mx-auto my-4 block rounded-full bg-sky-soft px-5 py-2 text-sm font-semibold text-primary">
+        <button
+          onClick={() => q.fetchNextPage()}
+          className="mx-auto my-4 block rounded-full bg-sky-soft px-5 py-2 text-sm font-semibold text-primary"
+        >
           {t("loadMore")}
         </button>
       )}

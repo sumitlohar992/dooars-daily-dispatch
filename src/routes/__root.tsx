@@ -25,7 +25,10 @@ function NotFoundComponent() {
         <h1 className="text-7xl font-bold text-primary">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
         <div className="mt-6">
-          <Link to="/" className="inline-flex rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground">
+          <Link
+            to="/"
+            className="inline-flex rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground"
+          >
             Go home
           </Link>
         </div>
@@ -46,7 +49,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
         <h1 className="text-xl font-semibold text-foreground">This page didn't load</h1>
         <p className="mt-2 text-sm text-muted-foreground">Please try again.</p>
         <button
-          onClick={() => { router.invalidate(); reset(); }}
+          onClick={() => {
+            router.invalidate();
+            reset();
+          }}
           className="mt-6 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground"
         >
           Try again
@@ -63,7 +69,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { name: "theme-color", content: "#13307a" },
       { title: "Dooars Khabar — Local news from the Dooars & beyond" },
-      { name: "description", content: "Breaking local, West Bengal and national news. Read, share and upload your own stories." },
+      {
+        name: "description",
+        content:
+          "Breaking local, West Bengal and national news. Read, share and upload your own stories.",
+      },
       { property: "og:title", content: "Dooars Khabar" },
       { property: "og:description", content: "Breaking local, West Bengal and national news." },
       { property: "og:type", content: "website" },
@@ -105,17 +115,27 @@ function RootShell({ children }: { children: ReactNode }) {
 // Short three-note welcome chime made in the browser (no audio file needed).
 function playChime() {
   try {
-    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const Ctx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     const ctx = new Ctx();
     [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type = "sine"; o.frequency.value = f;
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.type = "sine";
+      o.frequency.value = f;
       const t = ctx.currentTime + i * 0.18;
-      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.18, t + 0.03); g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
-      o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + 0.65);
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.18, t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.6);
+      o.connect(g).connect(ctx.destination);
+      o.start(t);
+      o.stop(t + 0.65);
     });
     setTimeout(() => ctx.close(), 1600);
-  } catch { /* sound blocked */ }
+  } catch {
+    /* sound blocked */
+  }
 }
 
 function Splash() {
@@ -146,13 +166,13 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-      <AuthProvider>
-        <Splash />
-        <TermsGate />
-        <Outlet />
-        <BottomNav />
-        <Toaster position="top-center" />
-      </AuthProvider>
+        <AuthProvider>
+          <Splash />
+          <TermsGate />
+          <Outlet />
+          <BottomNav />
+          <Toaster position="top-center" />
+        </AuthProvider>
       </LanguageProvider>
     </QueryClientProvider>
   );

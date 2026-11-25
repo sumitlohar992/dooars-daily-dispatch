@@ -21,7 +21,13 @@ function SavedPage() {
   return (
     <>
       <Header title="saved" />
-      <Page>{loading ? null : user ? <SavedList userId={user.id} /> : <SignInPrompt message="Sign in to see your saved stories." />}</Page>
+      <Page>
+        {loading ? null : user ? (
+          <SavedList userId={user.id} />
+        ) : (
+          <SignInPrompt message="Sign in to see your saved stories." />
+        )}
+      </Page>
     </>
   );
 }
