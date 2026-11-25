@@ -157,45 +157,69 @@ function Home() {
   }, [q]);
 
   return (
-    <>
-      <Header />
-      <SlideBar />
-      <Ticker />
-      <div className="sticky top-14 z-20 border-b bg-card">
-        <div className="no-scrollbar mx-auto flex max-w-xl md:max-w-3xl lg:max-w-5xl gap-2 overflow-x-auto px-4 py-2.5">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
-                tab === t ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {tr(t)}
-            </button>
-          ))}
-        </div>
+    <div className="relative isolate min-h-screen">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-x-0 bottom-16 top-14 z-0 flex items-center justify-center overflow-hidden"
+      >
+        <img src="/logo.png" alt="" className="h-64 w-64 object-contain opacity-[0.045] sm:h-80 sm:w-80" />
       </div>
-      <Page>
-        <QuickActions />
-        {q.isLoading ? (
-          Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
-        ) : (
-          <>
-            <Featured items={featured} />
-            {tab === "All" && rest.length > 0 && (
-              <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">{tr("latest")}</h2>
-            )}
-            {rest.map((a) => <ArticleCard key={a.id} a={a} />)}
-            {!all.length && <p className="p-10 text-center text-muted-foreground">{tr("noNews")}</p>}
-          </>
-        )}
-        <div ref={sentinel} />
-        {q.isFetchingNextPage && <CardSkeleton />}
-        {!q.hasNextPage && all.length > 0 && (
-          <p className="py-6 text-center text-xs text-muted-foreground">{tr("caughtUp")}</p>
-        )}
-      </Page>
-    </>
+      <div className="relative z-10">
+        <Header />
+        <SlideBar />
+        <Ticker />
+        <div className="sticky top-14 z-20 border-b bg-card">
+          <div className="no-scrollbar mx-auto flex max-w-xl md:max-w-3xl lg:max-w-5xl gap-2 overflow-x-auto px-4 py-2.5">
+            {TABS.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors ${
+                  tab === t ? "bg-sky text-secondary-foreground" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {tr(t)}
+              </button>
+            ))}
+          </div>
+        </div>
+        <Page>
+          <QuickActions />
+          {q.isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => <CardSkeleton key={i} />)
+          ) : (
+            <>
+              {q.isError && (
+                <div
+                  role="alert"
+                  className="mx-4 my-4 flex items-center justify-between gap-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm"
+                >
+                  <p>{tr("newsLoadError")}</p>
+                  <button
+                    onClick={() => q.refetch()}
+                    className="shrink-0 font-bold text-primary underline underline-offset-2"
+                  >
+                    {tr("retry")}
+                  </button>
+                </div>
+              )}
+              <Featured items={featured} />
+              {tab === "All" && rest.length > 0 && (
+                <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">{tr("latest")}</h2>
+              )}
+              {rest.map((a) => <ArticleCard key={a.id} a={a} />)}
+              {!all.length && !q.isError && (
+                <p className="p-10 text-center text-muted-foreground">{tr("noNews")}</p>
+              )}
+            </>
+          )}
+          <div ref={sentinel} />
+          {q.isFetchingNextPage && <CardSkeleton />}
+          {!q.hasNextPage && all.length > 0 && (
+            <p className="py-6 text-center text-xs text-muted-foreground">{tr("caughtUp")}</p>
+          )}
+        </Page>
+      </div>
+    </div>
   );
 }
