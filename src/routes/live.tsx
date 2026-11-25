@@ -94,6 +94,15 @@ function LivePage() {
     },
     refetchInterval: 15_000,
   });
+  const featuredYouTubeStream = socialStreams.data?.find(
+    (stream) => getSocialLiveEmbed(stream.stream_url)?.platform === "youtube",
+  );
+  const featuredYouTubeEmbed = featuredYouTubeStream
+    ? getSocialLiveEmbed(featuredYouTubeStream.stream_url)
+    : null;
+  const additionalSocialStreams = socialStreams.data?.filter(
+    (stream) => stream.id !== featuredYouTubeStream?.id,
+  );
 
   const saveSocialLive = useMutation({
     mutationFn: async (value: string) => {
@@ -468,6 +477,34 @@ function LivePage() {
             </div>
           )}
         </div>
+        {featuredYouTubeStream && featuredYouTubeEmbed && (
+          <section className="space-y-3 border-b px-4 py-6">
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="font-display text-lg font-extrabold">YouTube Live</h2>
+              {featuredYouTubeStream.user_id === user?.id && (
+                <button
+                  onClick={() => removeSocialLive.mutate(featuredYouTubeStream.id)}
+                  disabled={removeSocialLive.isPending}
+                  aria-label={t("removeSocialLive")}
+                  className="rounded-full p-2 text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+            <div className="mx-auto aspect-video max-w-4xl overflow-hidden rounded-xl bg-foreground">
+              <iframe
+                src={featuredYouTubeEmbed.embedUrl}
+                title="YouTube Live"
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                allowFullScreen
+                className="h-full w-full border-0"
+              />
+            </div>
+          </section>
+        )}
         {publishing ? (
           <div className="flex flex-col items-center gap-3 p-4">
             <div className="flex flex-wrap items-center justify-center gap-3">
@@ -558,61 +595,67 @@ function LivePage() {
           <p className="text-xs text-muted-foreground">{t("socialEmbedNote")}</p>
         </section>
 
-        <section className="space-y-3 px-4 pb-8">
-          <h2 className="font-display text-lg font-extrabold">{t("sharedSocialLive")}</h2>
-          {socialStreams.isPending ? (
-            <div className="h-24 animate-pulse rounded-xl bg-muted" />
-          ) : socialStreams.isError ? (
-            <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
-              {socialStreams.error.message}
-            </p>
-          ) : socialStreams.data.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("noSocialLive")}</p>
-          ) : (
-            <div className="grid gap-5 md:grid-cols-2">
-              {socialStreams.data.map((stream) => {
-                const embed = getSocialLiveEmbed(stream.stream_url);
-                if (!embed) return null;
-                return (
-                  <article key={stream.id} className="space-y-2 rounded-xl border p-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <a
-                        href={stream.stream_url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex min-w-0 items-center gap-2 text-sm font-bold text-primary"
-                      >
-                        {embed.platform === "youtube" ? "YouTube Live" : "Facebook Live"}
-                        <ExternalLink className="h-4 w-4 shrink-0" />
-                      </a>
-                      {stream.user_id === user?.id && (
-                        <button
-                          onClick={() => removeSocialLive.mutate(stream.id)}
-                          disabled={removeSocialLive.isPending}
-                          aria-label={t("removeSocialLive")}
-                          className="rounded-full p-2 text-destructive hover:bg-destructive/10 disabled:opacity-50"
+        {(socialStreams.isPending ||
+          socialStreams.isError ||
+          !socialStreams.data ||
+          socialStreams.data.length === 0 ||
+          (additionalSocialStreams?.length ?? 0) > 0) && (
+          <section className="space-y-3 px-4 pb-8">
+            <h2 className="font-display text-lg font-extrabold">{t("sharedSocialLive")}</h2>
+            {socialStreams.isPending ? (
+              <div className="h-24 animate-pulse rounded-xl bg-muted" />
+            ) : socialStreams.isError ? (
+              <p className="rounded-xl bg-destructive/10 p-3 text-sm text-destructive">
+                {socialStreams.error.message}
+              </p>
+            ) : socialStreams.data.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{t("noSocialLive")}</p>
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2">
+                {additionalSocialStreams?.map((stream) => {
+                  const embed = getSocialLiveEmbed(stream.stream_url);
+                  if (!embed) return null;
+                  return (
+                    <article key={stream.id} className="space-y-2 rounded-xl border p-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <a
+                          href={stream.stream_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex min-w-0 items-center gap-2 text-sm font-bold text-primary"
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                    <div className="aspect-video overflow-hidden rounded-lg bg-foreground">
-                      <iframe
-                        src={embed.embedUrl}
-                        title={embed.platform === "youtube" ? "YouTube Live" : "Facebook Live"}
-                        loading="lazy"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        allow="autoplay; encrypted-media; picture-in-picture; web-share"
-                        allowFullScreen
-                        className="h-full w-full border-0"
-                      />
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          )}
-        </section>
+                          {embed.platform === "youtube" ? "YouTube Live" : "Facebook Live"}
+                          <ExternalLink className="h-4 w-4 shrink-0" />
+                        </a>
+                        {stream.user_id === user?.id && (
+                          <button
+                            onClick={() => removeSocialLive.mutate(stream.id)}
+                            disabled={removeSocialLive.isPending}
+                            aria-label={t("removeSocialLive")}
+                            className="rounded-full p-2 text-destructive hover:bg-destructive/10 disabled:opacity-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      <div className="aspect-video overflow-hidden rounded-lg bg-foreground">
+                        <iframe
+                          src={embed.embedUrl}
+                          title={embed.platform === "youtube" ? "YouTube Live" : "Facebook Live"}
+                          loading="lazy"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          allow="autoplay; encrypted-media; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="h-full w-full border-0"
+                        />
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </section>
+        )}
       </Page>
     </>
   );
