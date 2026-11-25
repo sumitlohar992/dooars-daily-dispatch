@@ -7,7 +7,19 @@ import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
+import { HomeWatermark } from "../components/HomeWatermark";
 
+export function HomePage() {
+  return (
+    <div className="relative min-h-screen">
+      <HomeWatermark />
+
+      <div className="relative z-10">
+        {/* Put your existing home page sections here */}
+      </div>
+    </div>
+  );
+}
 function SlideBar() {
   const { data } = useQuery({
     queryKey: ["slides"],
