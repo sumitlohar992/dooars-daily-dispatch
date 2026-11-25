@@ -7,7 +7,7 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 const nitroOptions = {
-  preset: process.env.VERCEL ? "vercel" : "cloudflare-module",
+  preset: process.env["VERCEL"] ? "vercel" : "cloudflare-module",
   serverDir: "./server",
   experimental: { tasks: true },
   tasks: {

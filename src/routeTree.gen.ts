@@ -25,7 +25,6 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as UploadRouteImport } from './routes/upload'
 import { Route as ArticleIdRouteImport } from './routes/article.$id'
 import { Route as ApiPublicAiRouteImport } from './routes/api/public/ai'
-import { Route as ApiPublicLiveTokenRouteImport } from './routes/api/public/live-token'
 import { Route as ApiPublicCronGoogleNewsRouteImport } from './routes/api/public/cron/google-news'
 
 const IndexRoute = IndexRouteImport.update({
@@ -108,11 +107,6 @@ const ApiPublicAiRoute = ApiPublicAiRouteImport.update({
   path: '/api/public/ai',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicLiveTokenRoute = ApiPublicLiveTokenRouteImport.update({
-  id: '/api/public/live-token',
-  path: '/api/public/live-token',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiPublicCronGoogleNewsRoute = ApiPublicCronGoogleNewsRouteImport.update({
   id: '/api/public/cron/google-news',
   path: '/api/public/cron/google-news',
@@ -136,7 +130,6 @@ export interface FileRoutesByFullPath {
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/ai': typeof ApiPublicAiRoute
-  '/api/public/live-token': typeof ApiPublicLiveTokenRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesByTo {
@@ -156,7 +149,6 @@ export interface FileRoutesByTo {
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/ai': typeof ApiPublicAiRoute
-  '/api/public/live-token': typeof ApiPublicLiveTokenRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRoutesById {
@@ -177,7 +169,6 @@ export interface FileRoutesById {
   '/upload': typeof UploadRoute
   '/article/$id': typeof ArticleIdRoute
   '/api/public/ai': typeof ApiPublicAiRoute
-  '/api/public/live-token': typeof ApiPublicLiveTokenRoute
   '/api/public/cron/google-news': typeof ApiPublicCronGoogleNewsRoute
 }
 export interface FileRouteTypes {
@@ -199,7 +190,6 @@ export interface FileRouteTypes {
     | '/upload'
     | '/article/$id'
     | '/api/public/ai'
-    | '/api/public/live-token'
     | '/api/public/cron/google-news'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -219,7 +209,6 @@ export interface FileRouteTypes {
     | '/upload'
     | '/article/$id'
     | '/api/public/ai'
-    | '/api/public/live-token'
     | '/api/public/cron/google-news'
   id:
     | '__root__'
@@ -239,7 +228,6 @@ export interface FileRouteTypes {
     | '/upload'
     | '/article/$id'
     | '/api/public/ai'
-    | '/api/public/live-token'
     | '/api/public/cron/google-news'
   fileRoutesById: FileRoutesById
 }
@@ -260,7 +248,6 @@ export interface RootRouteChildren {
   UploadRoute: typeof UploadRoute
   ArticleIdRoute: typeof ArticleIdRoute
   ApiPublicAiRoute: typeof ApiPublicAiRoute
-  ApiPublicLiveTokenRoute: typeof ApiPublicLiveTokenRoute
   ApiPublicCronGoogleNewsRoute: typeof ApiPublicCronGoogleNewsRoute
 }
 
@@ -378,13 +365,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAiRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/live-token': {
-      id: '/api/public/live-token'
-      path: '/api/public/live-token'
-      fullPath: '/api/public/live-token'
-      preLoaderRoute: typeof ApiPublicLiveTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/public/cron/google-news': {
       id: '/api/public/cron/google-news'
       path: '/api/public/cron/google-news'
@@ -412,7 +392,6 @@ const rootRouteChildren: RootRouteChildren = {
   UploadRoute: UploadRoute,
   ArticleIdRoute: ArticleIdRoute,
   ApiPublicAiRoute: ApiPublicAiRoute,
-  ApiPublicLiveTokenRoute: ApiPublicLiveTokenRoute,
   ApiPublicCronGoogleNewsRoute: ApiPublicCronGoogleNewsRoute,
 }
 export const routeTree = rootRouteImport

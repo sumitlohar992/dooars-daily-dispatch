@@ -9,6 +9,73 @@ export const LANGS = [
 export type Lang = (typeof LANGS)[number]["code"];
 
 const D = {
+  youtubeLivePlayerTitle: ["YouTube Live", "YouTube Live", "YouTube Live", "YouTube Live"],
+  youtubeLiveTitle: [
+    "Share a YouTube Live stream",
+    "YouTube Live স্ট্রিম শেয়ার করুন",
+    "YouTube Live स्ट्रीम साझा करें",
+    "YouTube Live स्ट्रিম साझा गर्नुहोस्",
+  ],
+  youtubeLiveDescription: [
+    "Start your broadcast on YouTube, then paste its public link here. Anyone can watch it on this page.",
+    "YouTube-এ সম্প্রচার শুরু করে তার পাবলিক লিংক এখানে দিন। সবাই এই পেজে দেখতে পারবেন।",
+    "YouTube पर प्रसारण शुरू करें और उसका सार्वजनिक लिंक यहाँ डालें। सभी इसे इस पेज पर देख सकते हैं।",
+    "YouTube मा प्रसारण सुरु गरेर त्यसको सार्वजनिक लिङ्क यहाँ राख्नुहोस्। सबैले यो पृष्ठमा हेर्न सक्छन्।",
+  ],
+  youtubeLiveUrlPlaceholder: [
+    "Paste a public YouTube Live URL",
+    "একটি পাবলিক YouTube Live URL পেস্ট করুন",
+    "सार्वजनिक YouTube Live URL पेस्ट करें",
+    "सार्वजनिक YouTube Live URL टाँस्नुहोस्",
+  ],
+  publishYouTubeLive: [
+    "Share stream with everyone",
+    "সবার সঙ্গে স্ট্রিম শেয়ার করুন",
+    "सबके साथ स्ट्रीम साझा करें",
+    "सबैसँग स्ट्रिम साझा गर्नुहोस्",
+  ],
+  replaceYouTubeLive: [
+    "Replace my stream",
+    "আমার স্ট্রিম বদলান",
+    "मेरी स्ट्रीम बदलें",
+    "मेरो स्ट्रिम बदल्नुहोस्",
+  ],
+  removeYouTubeLive: [
+    "Remove my stream",
+    "আমার স্ট্রিম সরান",
+    "मेरी स्ट्रीम हटाएँ",
+    "मेरो स्ट्रिम हटाउनुहोस्",
+  ],
+  noYouTubeLive: [
+    "No YouTube Live streams shared yet.",
+    "এখনও কোনো YouTube Live স্ট্রিম শেয়ার করা হয়নি।",
+    "अभी तक कोई YouTube Live स्ट्रीम साझा नहीं की गई है।",
+    "अहिलेसम्म कुनै YouTube Live स्ट्रिम साझा गरिएको छैन।",
+  ],
+  sharedYouTubeLive: [
+    "Shared YouTube Live streams",
+    "শেয়ার করা YouTube Live স্ট্রিম",
+    "साझा की गई YouTube Live स्ट्रीम",
+    "साझा गरिएका YouTube Live स्ट्रिमहरू",
+  ],
+  youtubeEmbedNote: [
+    "The stream must be public and allow embedding. Start or schedule the broadcast on YouTube before sharing its link.",
+    "স্ট্রিমটি পাবলিক হতে হবে এবং এমবেড করার অনুমতি থাকতে হবে। লিংক শেয়ারের আগে YouTube-এ সম্প্রচার শুরু বা সময়সূচি নির্ধারণ করুন।",
+    "स्ट्रीम सार्वजनिक होनी चाहिए और एम्बेड की अनुमति होनी चाहिए। लिंक साझा करने से पहले YouTube पर प्रसारण शुरू करें या शेड्यूल करें।",
+    "स्ट्रिम सार्वजनिक र एम्बेड गर्न मिल्ने हुनुपर्छ। लिङ्क साझा गर्नुअघि YouTube मा प्रसारण सुरु वा तालिका बनाउनुहोस्।",
+  ],
+  invalidYoutubeLiveUrl: [
+    "Enter a valid public YouTube video or Live URL.",
+    "একটি বৈধ পাবলিক YouTube ভিডিও বা Live URL দিন।",
+    "एक मान्य सार्वजनिक YouTube वीडियो या Live URL दर्ज करें।",
+    "वैध सार्वजनिक YouTube भिडियो वा Live URL प्रविष्ट गर्नुहोस्।",
+  ],
+  signInToShareLive: [
+    "Sign in to share a YouTube Live stream.",
+    "YouTube Live স্ট্রিম শেয়ার করতে সাইন ইন করুন।",
+    "YouTube Live स्ट्रीम साझा करने के लिए साइन इन करें।",
+    "YouTube Live स्ट्रिम साझा गर्न साइन इन गर्नुहोस्।",
+  ],
   home: ["Home", "হোম", "होम", "गृह"],
   categories: ["Categories", "বিভাগ", "श्रेणियाँ", "वर्गहरू"],
   upload: ["Upload", "আপলোড", "अपलोड", "अपलोड"],
