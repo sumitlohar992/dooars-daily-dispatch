@@ -91,7 +91,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const TABS = ["All", ...CATEGORIES];
+const TABS = CATEGORIES;
 
 function Ticker() {
   const { data } = useQuery({
@@ -188,7 +188,7 @@ function Featured({ items }: { items: Article[] }) {
 }
 
 function Home() {
-  const [tab, setTab] = useState("All");
+  const [tab, setTab] = useState("Local");
   const { t: tr } = useT();
   const sentinel = useRef<HTMLDivElement>(null);
   const q = useInfiniteQuery({
@@ -198,8 +198,8 @@ function Home() {
     getNextPageParam: (last, all) => (last.length === PAGE_SIZE ? all.length : undefined),
   });
   const all = q.data?.pages.flat() ?? [];
-  const featured = tab === "All" ? all.filter((a) => a.image_url).slice(0, 4) : [];
-  const rest = tab === "All" ? all.filter((a) => !featured.includes(a)) : all;
+  const featured = tab === "Local" ? all.filter((a) => a.image_url).slice(0, 4) : [];
+  const rest = tab === "Local" ? all.filter((a) => !featured.includes(a)) : all;
 
   useEffect(() => {
     const el = sentinel.current;
@@ -256,7 +256,7 @@ function Home() {
                 </div>
               )}
               <Featured items={featured} />
-              {tab === "All" && rest.length > 0 && (
+              {tab === "Local" && rest.length > 0 && (
                 <h2 className="px-4 pb-1 pt-5 text-sm font-black uppercase tracking-wider text-primary">
                   {tr("latest")}
                 </h2>
