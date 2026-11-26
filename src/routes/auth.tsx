@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
@@ -28,9 +28,12 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
+  const [signupNotice, setSignupNotice] = useState("");
+  const [signupHasSession, setSignupHasSession] = useState(false);
+  const signupJustCompleted = useRef(false);
 
   useEffect(() => {
-    if (user) nav({ to: "/", replace: true });
+    if (user && !signupJustCompleted.current) nav({ to: "/", replace: true });
   }, [user, nav]);
 
   const google = async () => {
@@ -45,20 +48,43 @@ function AuthPage() {
     setBusy(true);
     try {
       if (mode === "in") {
+        signupJustCompleted.current = false;
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) toast.error(error.message);
         else if (data.session) nav({ to: "/", replace: true });
       } else {
-        const { error } = await supabase.auth.signUp({
+        signupJustCompleted.current = true;
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
         });
-        if (error) toast.error(error.message);
-        else toast.success("Check your email to confirm your account");
+        if (error) {
+          signupJustCompleted.current = false;
+          toast.error(error.message);
+        } else {
+          setSignupHasSession(!!data.session);
+          setSignupNotice(
+            data.session
+              ? "Your account was created and you are signed in."
+              : "Check your email to confirm your account, then sign in.",
+          );
+          setMode("in");
+          setPassword("");
+          toast.success(
+            data.session ? "Account created" : "Check your email to confirm your account",
+          );
+        }
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Sign-in failed");
+      if (mode === "up") signupJustCompleted.current = false;
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : mode === "up"
+            ? "Sign-up failed"
+            : "Sign-in failed",
+      );
     } finally {
       setBusy(false);
     }
@@ -105,6 +131,20 @@ function AuthPage() {
             or with email
             <span className="h-px flex-1 bg-border" />
           </div>
+          {signupNotice && (
+            <div className="mb-4 rounded-xl bg-muted p-3 text-sm" role="status">
+              <p>{signupNotice}</p>
+              {signupHasSession && (
+                <button
+                  type="button"
+                  onClick={() => nav({ to: "/", replace: true })}
+                  className="mt-2 font-semibold text-primary"
+                >
+                  Continue to Dooars Khabar
+                </button>
+              )}
+            </div>
+          )}
           <form onSubmit={submit} className="space-y-3">
             {mode === "up" && (
               <input
@@ -140,7 +180,11 @@ function AuthPage() {
             </button>
           </form>
           <button
-            onClick={() => setMode(mode === "in" ? "up" : "in")}
+            onClick={() => {
+              setMode(mode === "in" ? "up" : "in");
+              setSignupNotice("");
+              setSignupHasSession(false);
+            }}
             className="mt-4 w-full text-center text-sm font-semibold text-primary"
           >
             {mode === "in" ? "New here? Create an account" : "Already have an account? Sign in"}
