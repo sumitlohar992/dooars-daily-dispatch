@@ -80,13 +80,11 @@ function UploadPage() {
   const [category, setCategory] = useState<string>("Local");
   const [body, setBody] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const [imageIsAi, setImageIsAi] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const { t } = useT();
   const [existing, setExisting] = useState<{
     image_url: string | null;
-    image_is_ai: boolean;
     video_url: string | null;
   } | null>(null);
   useEffect(() => {
@@ -106,7 +104,6 @@ function UploadPage() {
         setBody(data.body);
         setExisting({
           image_url: data.image_url,
-          image_is_ai: data.image_is_ai,
           video_url: data.video_url,
         });
       });
@@ -159,7 +156,6 @@ function UploadPage() {
         : thumb
           ? await uploadFile(user.id, thumb)
           : (existing?.image_url ?? null);
-      const image_is_ai = image ? imageIsAi : thumb ? false : (existing?.image_is_ai ?? false);
       const video_url = video ? await uploadFile(user.id, video) : (existing?.video_url ?? null);
       const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
       const fields = {
@@ -168,7 +164,6 @@ function UploadPage() {
         body,
         summary,
         image_url,
-        image_is_ai,
         video_url,
       };
       const { data, error } = edit
@@ -234,10 +229,7 @@ function UploadPage() {
                 label={t("addPhoto")}
                 accept="image/*"
                 file={image}
-                onChange={(file) => {
-                  setImage(file);
-                  setImageIsAi(false);
-                }}
+                onChange={setImage}
               />
             </div>
             <MediaPicker

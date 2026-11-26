@@ -57,6 +57,13 @@
       "when": 1794193480000,
       "tag": "0007_media_bucket_setup",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1794279880000,
+      "tag": "0008_fix_article_media_schema",
+      "breakpoints": true
     }
   ]
 }
