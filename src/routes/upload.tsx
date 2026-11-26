@@ -25,17 +25,53 @@ export const Route = createFileRoute("/upload")({
   component: UploadPage,
 });
 
+const MEDIA_MIME_TYPES: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  gif: "image/gif",
+  mp4: "video/mp4",
+  webm: "video/webm",
+  mov: "video/quicktime",
+  m4v: "video/x-m4v",
+};
+
 async function uploadFile(userId: string, file: File) {
-  const path = `${userId}/${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
-  const { error } = await supabase.storage
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const contentType = file.type || MEDIA_MIME_TYPES[extension];
+  if (!contentType || !Object.values(MEDIA_MIME_TYPES).includes(contentType)) {
+    throw new Error(
+      `This file format (${file.type || extension || "unknown"}) is not supported. Use JPG, PNG, WebP, GIF, MP4, WebM, MOV, or M4V.`,
+    );
+  }
+
+  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${userId}/${crypto.randomUUID()}-${safeName}`;
+  const { error: uploadError } = await supabase.storage
     .from("media")
-    .upload(path, file, { contentType: file.type });
-  if (error) throw error;
-  const { data, error: e2 } = await supabase.storage
+    .upload(path, file, { contentType, upsert: false });
+  if (uploadError) {
+    throw new Error(`Could not upload media: ${uploadError.message}`);
+  }
+
+  // Keep the intended ten-year signed URL, but still let publishing work when
+  // the Supabase project's max signed-URL lifetime is configured lower.
+  const requestedExpiry = 60 * 60 * 24 * 365 * 10;
+  const { data, error } = await supabase.storage
     .from("media")
-    .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
-  if (e2 || !data) throw e2;
-  return data.signedUrl;
+    .createSignedUrl(path, requestedExpiry);
+  if (!error && data?.signedUrl) return data.signedUrl;
+
+  const firstError = error?.message ?? "Supabase returned no signed URL";
+  const { data: fallbackData, error: fallbackError } = await supabase.storage
+    .from("media")
+    .createSignedUrl(path, 60 * 60 * 24 * 365);
+  if (!fallbackError && fallbackData?.signedUrl) return fallbackData.signedUrl;
+
+  throw new Error(
+    `Media uploaded, but a view link could not be created. ${fallbackError?.message ?? firstError}`,
+  );
 }
 
 /** Grabs a frame ~1s into the video and returns it as a JPEG file for the thumbnail. */
