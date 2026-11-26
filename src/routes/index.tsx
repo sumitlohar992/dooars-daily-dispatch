@@ -8,6 +8,7 @@ import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
 
+
 function SlideBar() {
   const { data } = useQuery({
     queryKey: ["slides"],
@@ -91,7 +92,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const TABS = ["All", ...CATEGORIES];
+const TABS = CATEGORIES;
 
 function Ticker() {
   const { data } = useQuery({
@@ -188,7 +189,7 @@ function Featured({ items }: { items: Article[] }) {
 }
 
 function Home() {
-  const [tab, setTab] = useState("All");
+  const [tab, setTab] = useState("Local");
   const { t: tr } = useT();
   const sentinel = useRef<HTMLDivElement>(null);
   const q = useInfiniteQuery({
