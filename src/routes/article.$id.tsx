@@ -83,7 +83,7 @@ function ArticlePage() {
     supabase.rpc("record_view", { _article_id: id }).then(() => {});
   }, [id]);
   const authorId = art.data?.author_id;
-  const hasMedia = !!(art.data?.image_url || art.data?.image_urls?.length || art.data?.video_url);
+  const hasMedia = !!(art.data?.image_url || art.data?.video_url);
   useEffect(() => {
     if (!authorId || authorId === user?.id || !hasMedia || !user) return;
     const recordWatch = (active: boolean) => {
@@ -216,7 +216,6 @@ function ArticlePage() {
     );
 
   const links = shareLinks(a);
-  const imageUrls = a.image_urls?.length ? a.image_urls : a.image_url ? [a.image_url] : [];
   const onShare = async () => {
     if (!(await shareArticle(a))) {
       await navigator.clipboard.writeText(`${location.origin}/article/${a.id}`);
@@ -229,17 +228,10 @@ function ArticlePage() {
       <div>
         <Header title={a.category} back={back} />
         <Page>
-          {imageUrls.length > 0 && (
+          {a.image_url && (
             <>
-              <div className="flex snap-x snap-mandatory overflow-x-auto">
-                {imageUrls.map((url, index) => (
-                  <img
-                    key={`${url}-${index}`}
-                    src={url}
-                    alt=""
-                    className="aspect-[16/10] w-full shrink-0 snap-center object-cover"
-                  />
-                ))}
+              <div className="relative">
+                <img src={a.image_url} alt="" className="aspect-[16/10] w-full object-cover" />
               </div>
               {a.image_is_ai && (
                 <p className="px-4 pt-2 text-xs text-muted-foreground">{t("aiIllustration")}</p>
@@ -316,7 +308,7 @@ function ArticlePage() {
             {a.video_url && (
               <video
                 src={a.video_url}
-                poster={imageUrls[0] ?? undefined}
+                poster={a.image_url ?? undefined}
                 controls
                 playsInline
                 className="mt-4 w-full rounded-xl bg-foreground"
