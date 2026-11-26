@@ -78,6 +78,13 @@
       "when": 1795694845000,
       "tag": "0010_ensure_article_image_urls",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1795716993936,
+      "tag": "0011_ensure_media_bucket",
+      "breakpoints": true
     }
   ]
 }
