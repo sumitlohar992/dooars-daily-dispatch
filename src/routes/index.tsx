@@ -2,18 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  CATEGORIES,
-  PAGE_SIZE,
-  fetchArticles,
-  timeAgo,
-  type NewsLanguage,
-  type Article,
-} from "@/lib/news";
+import { CATEGORIES, PAGE_SIZE, fetchArticles, timeAgo, type Article } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
 import { ArticleCard, CardSkeleton } from "@/components/ArticleCard";
 import { useT } from "@/lib/i18n";
 import { Radio, MapPin, Bot } from "lucide-react";
+
 
 function SlideBar() {
   const { data } = useQuery({
@@ -98,7 +92,7 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const TABS = ["All", ...CATEGORIES];
+const TABS = CATEGORIES;
 
 function Ticker() {
   const { data } = useQuery({
@@ -195,18 +189,12 @@ function Featured({ items }: { items: Article[] }) {
 }
 
 function Home() {
-  const [tab, setTab] = useState("All");
-  const [language, setLanguage] = useState<NewsLanguage | "all">("all");
+  const [tab, setTab] = useState("Local");
   const { t: tr } = useT();
   const sentinel = useRef<HTMLDivElement>(null);
   const q = useInfiniteQuery({
-    queryKey: ["feed", tab, language],
-    queryFn: ({ pageParam }) =>
-      fetchArticles({
-        category: tab,
-        page: pageParam,
-        ...(language !== "all" ? { language } : {}),
-      }),
+    queryKey: ["feed", tab],
+    queryFn: ({ pageParam }) => fetchArticles({ category: tab, page: pageParam }),
     initialPageParam: 0,
     getNextPageParam: (last, all) => (last.length === PAGE_SIZE ? all.length : undefined),
   });
@@ -244,28 +232,6 @@ function Home() {
                 }`}
               >
                 {tr(t)}
-              </button>
-            ))}
-          </div>
-          <div className="no-scrollbar mx-auto flex max-w-xl md:max-w-3xl lg:max-w-5xl gap-2 overflow-x-auto px-4 pb-2.5">
-            {(
-              [
-                ["all", "allLanguages"],
-                ["en", "English"],
-                ["bn", "বাংলা"],
-                ["hi", "हिन्दी"],
-              ] as const
-            ).map(([code, label]) => (
-              <button
-                key={code}
-                onClick={() => setLanguage(code)}
-                className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold transition-colors ${
-                  language === code
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {label === "allLanguages" ? tr(label) : label}
               </button>
             ))}
           </div>
