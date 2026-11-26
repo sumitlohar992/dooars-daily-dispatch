@@ -127,6 +127,9 @@ export async function uploadMedia(userId: string, file: File, kind: "image" | "v
     await uploadResumable(path, file, contentType);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
+    if (/bucket not found|nosuchbucket/i.test(message)) {
+      throw new Error("Media storage is not initialized. Apply the Supabase media migration.");
+    }
     if (/failed to fetch|network error|load failed/i.test(message)) {
       throw new Error(
         "Could not reach media storage. Check your internet connection and retry. If it keeps failing, verify the media bucket migration is applied.",
