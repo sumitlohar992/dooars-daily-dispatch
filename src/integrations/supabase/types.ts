@@ -22,7 +22,6 @@ export type Database = {
           is_breaking: boolean;
           media_watch_seconds: number;
           source_name: string | null;
-          source_language: "en" | "bn" | "hi" | null;
           source_url: string | null;
           summary: string | null;
           title: string;
@@ -42,7 +41,6 @@ export type Database = {
           is_breaking?: boolean;
           media_watch_seconds?: number;
           source_name?: string | null;
-          source_language?: "en" | "bn" | "hi" | null;
           source_url?: string | null;
           summary?: string | null;
           title: string;
@@ -62,7 +60,6 @@ export type Database = {
           is_breaking?: boolean;
           media_watch_seconds?: number;
           source_name?: string | null;
-          source_language?: "en" | "bn" | "hi" | null;
           source_url?: string | null;
           summary?: string | null;
           title?: string;
