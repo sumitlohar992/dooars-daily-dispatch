@@ -16,7 +16,7 @@ const nitroOptions = {
     },
   },
   scheduledTasks: {
-    [process.env["VERCEL"] ? "0 0 * * *" : "*/30 * * * *"]: ["google-news"],
+    "*/30 * * * *": ["google-news"],
   },
 };
 
