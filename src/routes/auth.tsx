@@ -43,19 +43,25 @@ function AuthPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    if (mode === "in") {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) toast.error(error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
-      });
-      if (error) toast.error(error.message);
-      else toast.success("Check your email to confirm your account");
+    try {
+      if (mode === "in") {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) toast.error(error.message);
+        else if (data.session) nav({ to: "/", replace: true });
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin, data: { full_name: name } },
+        });
+        if (error) toast.error(error.message);
+        else toast.success("Check your email to confirm your account");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Sign-in failed");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   };
 
   const field =

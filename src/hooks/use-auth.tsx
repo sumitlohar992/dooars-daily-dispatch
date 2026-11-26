@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -9,16 +9,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const authEventVersion = useRef(0);
   useEffect(() => {
+    let active = true;
+    const initialEventVersion = authEventVersion.current;
     const { data } = supabase.auth.onAuthStateChange((_e, session) => {
+      authEventVersion.current += 1;
       setUser(session?.user ?? null);
       setLoading(false);
     });
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-    });
-    return () => data.subscription.unsubscribe();
+    supabase.auth
+      .getSession()
+      .then(({ data: sessionData, error }) => {
+        if (!active) return;
+        if (error) {
+          console.error("Failed to restore the sign-in session", error);
+        } else if (authEventVersion.current === initialEventVersion) {
+          setUser(sessionData.session?.user ?? null);
+        }
+        setLoading(false);
+      })
+      .catch((error: unknown) => {
+        if (!active) return;
+        console.error("Failed to restore the sign-in session", error);
+        setLoading(false);
+      });
+    return () => {
+      active = false;
+      data.subscription.unsubscribe();
+    };
   }, []);
   const uid = user?.id;
   useEffect(() => {
