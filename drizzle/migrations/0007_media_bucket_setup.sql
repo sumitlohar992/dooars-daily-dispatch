@@ -12,6 +12,7 @@ on conflict (id) do update set
   allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "media public read" on storage.objects;
+drop policy if exists "media signed read" on storage.objects;
 drop policy if exists "media auth upload" on storage.objects;
 drop policy if exists "media owner update" on storage.objects;
 drop policy if exists "media owner delete" on storage.objects;
