@@ -3,12 +3,12 @@ values (
   'media',
   'media',
   false,
-  52428800,
-  array['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v']
+  104857600,
+  array['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/gif', 'video/mp4', 'video/webm', 'video/quicktime', 'video/x-m4v']
 )
 on conflict (id) do update set
   public = false,
-  file_size_limit = 52428800,
+  file_size_limit = 104857600,
   allowed_mime_types = excluded.allowed_mime_types;
 
 drop policy if exists "media public read" on storage.objects;

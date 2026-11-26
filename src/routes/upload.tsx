@@ -9,6 +9,7 @@ import { CATEGORIES } from "@/lib/news";
 import { Header, Page } from "@/components/AppShell";
 import { SignInPrompt } from "@/components/SignInPrompt";
 import { useT } from "@/lib/i18n";
+import { uploadMedia, validateMediaFile } from "@/lib/media";
 
 export const Route = createFileRoute("/upload")({
   head: () => ({
@@ -25,53 +26,15 @@ export const Route = createFileRoute("/upload")({
   component: UploadPage,
 });
 
-const MEDIA_MIME_TYPES: Record<string, string> = {
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  png: "image/png",
-  webp: "image/webp",
-  gif: "image/gif",
-  mp4: "video/mp4",
-  webm: "video/webm",
-  mov: "video/quicktime",
-  m4v: "video/x-m4v",
-};
-
 async function uploadFile(userId: string, file: File) {
-  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
-  const contentType = file.type || MEDIA_MIME_TYPES[extension];
-  if (!contentType || !Object.values(MEDIA_MIME_TYPES).includes(contentType)) {
-    throw new Error(
-      `This file format (${file.type || extension || "unknown"}) is not supported. Use JPG, PNG, WebP, GIF, MP4, WebM, MOV, or M4V.`,
-    );
-  }
-
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-  const path = `${userId}/${crypto.randomUUID()}-${safeName}`;
-  const { error: uploadError } = await supabase.storage
-    .from("media")
-    .upload(path, file, { contentType, upsert: false });
-  if (uploadError) {
-    throw new Error(`Could not upload media: ${uploadError.message}`);
-  }
-
-  // Keep the intended ten-year signed URL, but still let publishing work when
-  // the Supabase project's max signed-URL lifetime is configured lower.
-  const requestedExpiry = 60 * 60 * 24 * 365 * 10;
-  const { data, error } = await supabase.storage
-    .from("media")
-    .createSignedUrl(path, requestedExpiry);
-  if (!error && data?.signedUrl) return data.signedUrl;
-
-  const firstError = error?.message ?? "Supabase returned no signed URL";
-  const { data: fallbackData, error: fallbackError } = await supabase.storage
-    .from("media")
-    .createSignedUrl(path, 60 * 60 * 24 * 365);
-  if (!fallbackError && fallbackData?.signedUrl) return fallbackData.signedUrl;
-
-  throw new Error(
-    `Media uploaded, but a view link could not be created. ${fallbackError?.message ?? firstError}`,
-  );
+  const videoExtensions = new Set(["mp4", "webm", "mov", "m4v"]);
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  const kind = file.type.startsWith("video/")
+    || (extension ? videoExtensions.has(extension) : false)
+    ? "video"
+    : "image";
+  validateMediaFile(file, kind);
+  return uploadMedia(userId, file, kind);
 }
 
 /** Grabs a frame ~1s into the video and returns it as a JPEG file for the thumbnail. */
@@ -381,9 +344,13 @@ function MediaPicker({
     const input = e.currentTarget;
     const selected = input.files?.[0] ?? null;
     input.value = "";
-    if (selected && selected.size > 50 * 1024 * 1024) {
-      toast.error("File is too large (max 50MB)");
-      return;
+    if (selected) {
+      try {
+        validateMediaFile(selected, accept.startsWith("video/") ? "video" : "image");
+      } catch (error) {
+        toast.error((error as Error).message);
+        return;
+      }
     }
     onChange(selected);
   };

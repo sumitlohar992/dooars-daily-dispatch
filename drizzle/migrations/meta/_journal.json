@@ -22,6 +22,41 @@
       "when": 1793761480198,
       "tag": "0002_social_owner_features",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793847880000,
+      "tag": "0003_creator_watch_time",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793934280000,
+      "tag": "0004_ignore_author_views",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1794020680000,
+      "tag": "0005_social_live_streams",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1794107080000,
+      "tag": "0006_ai_article_images",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794193480000,
+      "tag": "0007_media_bucket_setup",
+      "breakpoints": true
     }
   ]
 }
