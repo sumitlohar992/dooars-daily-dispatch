@@ -71,7 +71,10 @@ function getSupabaseUploadConfig() {
   if (!url || !key) {
     throw new Error("Media storage is not configured. Connect Supabase and try again.");
   }
-  return { url: url.replace(/\/+$/, ""), key };
+  const projectUrl = new URL(url);
+  const projectRef = /^([a-z0-9-]+)\.supabase\.co$/i.exec(projectUrl.hostname)?.[1];
+  if (projectRef) projectUrl.hostname = `${projectRef}.storage.supabase.co`;
+  return { url: projectUrl.origin, key };
 }
 
 async function uploadResumable(path: string, file: File, contentType: string): Promise<void> {
