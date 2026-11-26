@@ -2,7 +2,6 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
 export type Article = Tables<"articles">;
-export type NewsLanguage = "en" | "bn" | "hi";
 
 export const CATEGORIES = [
   "Local",
@@ -34,15 +33,11 @@ export async function fetchArticles(opts: {
   page: number;
   search?: string;
   authorId?: string;
-  language?: NewsLanguage;
 }) {
   let q = supabase.from("articles").select("*").order("created_at", { ascending: false });
   if (opts.category && opts.category !== "All") q = q.eq("category", opts.category);
   if (opts.authorId) q = q.eq("author_id", opts.authorId);
   if (opts.search) q = q.or(`title.ilike.%${opts.search}%,body.ilike.%${opts.search}%`);
-  if (opts.language) {
-    q = q.or(`source_url.is.null,source_language.eq.${opts.language},source_language.is.null`);
-  }
   const from = opts.page * PAGE_SIZE;
   const { data, error } = await q.range(from, from + PAGE_SIZE - 1);
   if (error) throw error;
