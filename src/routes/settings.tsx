@@ -24,7 +24,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Header, Page } from "@/components/AppShell";
 import { SignInPrompt } from "@/components/SignInPrompt";
-import { uploadMedia } from "@/lib/media";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -105,8 +104,16 @@ function SettingsPage() {
     if (!file) return;
     setUploading(true);
     try {
-      const signedUrl = await uploadMedia(user.id, file, "profile");
-      setF((p) => ({ ...p, photo_url: signedUrl }));
+      const path = `${user.id}/avatar-${crypto.randomUUID()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}`;
+      const { error } = await supabase.storage
+        .from("media")
+        .upload(path, file, { contentType: file.type });
+      if (error) throw error;
+      const { data, error: e2 } = await supabase.storage
+        .from("media")
+        .createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+      if (e2 || !data) throw e2;
+      setF((p) => ({ ...p, photo_url: data.signedUrl }));
       toast.success("Photo ready — tap Save to keep it");
     } catch (e) {
       toast.error((e as Error).message ?? "Photo upload failed");
