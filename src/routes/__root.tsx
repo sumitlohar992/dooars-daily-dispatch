@@ -162,12 +162,52 @@ function Splash() {
   );
 }
 
+function OfflineStatus() {
+  const [offline, setOffline] = useState(
+    typeof navigator !== "undefined" ? !navigator.onLine : false,
+  );
+
+  useEffect(() => {
+    const goOffline = () => setOffline(true);
+    const goOnline = () => setOffline(false);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+    };
+  }, []);
+
+  if (!offline) return null;
+  return (
+    <div
+      role="status"
+      className="fixed left-1/2 top-16 z-[90] -translate-x-1/2 rounded-full bg-foreground px-4 py-2 text-xs font-bold text-background shadow-card"
+    >
+      You are offline
+    </div>
+  );
+}
+
+function ServiceWorkerRegistration() {
+  useEffect(() => {
+    if (import.meta.env.PROD && "serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch((error) => {
+        console.error("Could not register offline service worker", error);
+      });
+    }
+  }, []);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <AuthProvider>
+          <ServiceWorkerRegistration />
+          <OfflineStatus />
           <Splash />
           <TermsGate />
           <HomeWatermark />
