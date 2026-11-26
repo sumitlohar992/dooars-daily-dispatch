@@ -29,10 +29,10 @@ export const Route = createFileRoute("/upload")({
 async function uploadFile(userId: string, file: File) {
   const videoExtensions = new Set(["mp4", "webm", "mov", "m4v"]);
   const extension = file.name.split(".").pop()?.toLowerCase();
-  const kind =
-    file.type.startsWith("video/") || (extension ? videoExtensions.has(extension) : false)
-      ? "video"
-      : "image";
+  const kind = file.type.startsWith("video/")
+    || (extension ? videoExtensions.has(extension) : false)
+    ? "video"
+    : "image";
   validateMediaFile(file, kind);
   return uploadMedia(userId, file, kind);
 }
@@ -79,17 +79,17 @@ function UploadPage() {
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState<string>("Local");
   const [body, setBody] = useState("");
-  const [images, setImages] = useState<File[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>([]);
+  const [image, setImage] = useState<File | null>(null);
   const [video, setVideo] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const { t } = useT();
-  const [existingVideoUrl, setExistingVideoUrl] = useState<string | null>(null);
+  const [existing, setExisting] = useState<{
+    image_url: string | null;
+    video_url: string | null;
+  } | null>(null);
   useEffect(() => {
-    setImages([]);
-    setExistingImages([]);
-    setExistingVideoUrl(null);
     if (!edit) {
+      setExisting(null);
       return;
     }
     supabase
@@ -102,13 +102,10 @@ function UploadPage() {
         setTitle(data.title);
         setCategory(data.category);
         setBody(data.body);
-        const imageUrls = data.image_urls?.length
-          ? data.image_urls
-          : data.image_url
-            ? [data.image_url]
-            : [];
-        setExistingImages(imageUrls);
-        setExistingVideoUrl(data.video_url);
+        setExisting({
+          image_url: data.image_url,
+          video_url: data.video_url,
+        });
       });
   }, [edit]);
 
@@ -153,13 +150,13 @@ function UploadPage() {
     }
     setBusy(true);
     try {
-      const uploadedImages = await Promise.all(images.map((file) => uploadFile(user.id, file)));
-      const allImageUrls = [...existingImages, ...uploadedImages];
-      const thumb = allImageUrls.length === 0 && video ? await videoThumbnail(video) : null;
-      if (thumb) allImageUrls.push(await uploadFile(user.id, thumb));
-      const image_urls = allImageUrls;
-      const image_url = image_urls[0] ?? null;
-      const video_url = video ? await uploadFile(user.id, video) : existingVideoUrl;
+      const thumb = !image && video ? await videoThumbnail(video) : null;
+      const image_url = image
+        ? await uploadFile(user.id, image)
+        : thumb
+          ? await uploadFile(user.id, thumb)
+          : (existing?.image_url ?? null);
+      const video_url = video ? await uploadFile(user.id, video) : (existing?.video_url ?? null);
       const summary = body.replace(/[#*]/g, "").trim().split("\n")[0]?.slice(0, 160) ?? "";
       const fields = {
         title: title.trim(),
@@ -167,7 +164,6 @@ function UploadPage() {
         body,
         summary,
         image_url,
-        image_urls,
         video_url,
       };
       const { data, error } = edit
@@ -228,15 +224,12 @@ function UploadPage() {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-2">
-              <ImagePicker
+              <MediaPicker
                 icon={<ImagePlus className="h-6 w-6" />}
-                label={t("addPhotos")}
-                files={images}
-                existingImages={existingImages}
-                onFilesChange={setImages}
-                onRemoveExisting={(index) =>
-                  setExistingImages((current) => current.filter((_, i) => i !== index))
-                }
+                label={t("addPhoto")}
+                accept="image/*"
+                file={image}
+                onChange={setImage}
               />
             </div>
             <MediaPicker
@@ -379,93 +372,6 @@ function MediaPicker({
           <input type="file" accept={accept} className="hidden" onChange={handleFileChange} />
         </label>
       )}
-    </div>
-  );
-}
-
-function ImagePicker({
-  icon,
-  label,
-  files,
-  existingImages,
-  onFilesChange,
-  onRemoveExisting,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  files: File[];
-  existingImages: string[];
-  onFilesChange: (files: File[]) => void;
-  onRemoveExisting: (index: number) => void;
-}) {
-  const [urls, setUrls] = useState<string[]>([]);
-  useEffect(() => {
-    const objectUrls = files.map((file) => URL.createObjectURL(file));
-    setUrls(objectUrls);
-    return () => objectUrls.forEach((url) => URL.revokeObjectURL(url));
-  }, [files]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.currentTarget;
-    const selected = Array.from(input.files ?? []);
-    input.value = "";
-    const valid: File[] = [];
-    for (const file of selected) {
-      try {
-        validateMediaFile(file, "image");
-        valid.push(file);
-      } catch (error) {
-        toast.error((error as Error).message);
-      }
-    }
-    if (valid.length) onFilesChange([...files, ...valid]);
-  };
-
-  return (
-    <div className="grid grid-cols-2 gap-2">
-      {existingImages.map((url, index) => (
-        <div
-          key={`existing-${url}`}
-          className="relative aspect-square overflow-hidden rounded-xl border bg-muted"
-        >
-          <img src={url} alt="" className="h-full w-full object-cover" />
-          <button
-            type="button"
-            onClick={() => onRemoveExisting(index)}
-            aria-label="Remove photo"
-            className="absolute right-1.5 top-1.5 rounded-full bg-card p-1 shadow-card"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      ))}
-      {files.map((file, index) => (
-        <div
-          key={`${file.name}-${file.lastModified}-${index}`}
-          className="relative aspect-square overflow-hidden rounded-xl border bg-muted"
-        >
-          {urls[index] && <img src={urls[index]} alt="" className="h-full w-full object-cover" />}
-          <button
-            type="button"
-            onClick={() => onFilesChange(files.filter((_, i) => i !== index))}
-            aria-label="Remove photo"
-            className="absolute right-1.5 top-1.5 rounded-full bg-card p-1 shadow-card"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      ))}
-      <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-sky bg-sky-soft text-sm font-semibold text-primary">
-        {icon}
-        {label}
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          className="hidden"
-          onChange={handleFileChange}
-        />
-      </label>
     </div>
   );
 }
