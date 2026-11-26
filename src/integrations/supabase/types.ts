@@ -17,7 +17,6 @@ export type Database = {
           created_at: string;
           id: string;
           image_url: string | null;
-          image_urls: string[];
           image_is_ai: boolean;
           is_breaking: boolean;
           media_watch_seconds: number;
@@ -36,7 +35,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          image_urls?: string[];
           image_is_ai?: boolean;
           is_breaking?: boolean;
           media_watch_seconds?: number;
@@ -55,7 +53,6 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          image_urls?: string[];
           image_is_ai?: boolean;
           is_breaking?: boolean;
           media_watch_seconds?: number;
