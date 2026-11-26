@@ -118,7 +118,7 @@ const D = {
   headline: ["Headline", "শিরোনাম", "शीर्षक", "शीर्षक"],
   whatHappened: ["What happened?", "কী ঘটেছে?", "क्या हुआ?", "के भयो?"],
   category: ["Category", "বিভাগ", "श्रेणी", "वर्ग"],
-  addPhoto: ["Add photo", "ছবি যোগ করুন", "फ़ोटो जोड़ें", "फोटो थप्नुहोस्"],
+  addPhotos: ["Add photos", "ছবি যোগ করুন", "फ़ोटो जोड़ें", "फोटो थप्नुहोस्"],
   addVideo: ["Add video", "ভিডিও যোগ করুন", "वीडियो जोड़ें", "भिडियो थप्नुहोस्"],
   generateAIImage: ["Generate AI image", "AI ছবি তৈরি করুন", "AI छवि बनाएँ", "AI तस्बिर बनाउनुहोस्"],
   generatingAIImage: ["Generating image…", "ছবি তৈরি হচ্ছে…", "छवि बनाई जा रही है…", "तस्बिर बनाउँदै…"],
